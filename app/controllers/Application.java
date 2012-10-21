@@ -11,18 +11,18 @@ import views.html.*;
 
 public class Application extends Controller {
 	
-	final Form<Inscription> inscriptionForm = form(Inscription.class);
-	private Repository repository;
+	final static Form<Inscription> inscriptionForm = form(Inscription.class);
+	@Inject static Repository repository;
 	
-	@Inject public Application(Repository repository) {
+	public Application(Repository repository) {
 	    this.repository = repository;
 	  }
   
-  public Result index() {
-    return ok(index.render(inscriptionForm, ""));
-  }
+	public static Result index() {
+		return ok(index.render(inscriptionForm, ""));
+  	}
 
-	public Result submit() {
+	public static Result submit() {
 		Form<Inscription> filledForm = inscriptionForm.bindFromRequest();
 		
 		if(filledForm.hasErrors()) {

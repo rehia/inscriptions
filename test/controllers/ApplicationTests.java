@@ -21,38 +21,36 @@ import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
 
 public class ApplicationTests {
-	
+			
 	@Test
 	public void testIndex() { 
-		
-		Result result = routeAndCall(fakeRequest(GET, "/"));
-		
+        Result result = routeAndCall(fakeRequest(GET, "/"));
 		assertThat(status(result)).isEqualTo(OK);
 	}
 	
 	@Test
 	public void shouldSubmitInscriptionCorrectly() {
 		Inscription inscription = givenIHaveAValidInscription();
-		
+				
 		Result result = whenTheInscriptionIsSubmited(inscription);
-		
+				
 		thenTheInscriptionIsValid(result);
-	}
+    }
 	
 	@Test
 	public void shouldNotSubmitInscriptionWhenInvalid() {
+		
 		Inscription inscription = givenIHaveAValidInscription();
 		inscription = givenInscriptionIsInvalid(inscription);
-		
+				
 		Result result = whenTheInscriptionIsSubmited(inscription);
-		
-		thenTheInscriptionIsNotValid(result);
-		
+				
+		thenTheInscriptionIsNotValid(result);	
 	}
 
 	private Inscription givenInscriptionIsInvalid(Inscription inscription) {
 		inscription.email = null;
-		module.Dependencies.application().inscriptionForm.reject("email", "email is required");
+		controllers.Application.inscriptionForm.reject("email", "email is required");
 		
 		return inscription;
 	}
@@ -68,7 +66,6 @@ public class ApplicationTests {
 	}
 
 	private Result whenTheInscriptionIsSubmited(Inscription inscription) {
-				
 		JsonNode node = Json.toJson(inscription);
 		FakeRequest fakeRequest = fakeRequest(POST, "/").withJsonBody(node);
 		return routeAndCall(fakeRequest);
