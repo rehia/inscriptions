@@ -6,11 +6,7 @@ import static org.junit.Assert.*;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.POST;
 import static play.test.Helpers.GET;
-import static play.test.Helpers.contentAsString;
-import static play.test.Helpers.fakeRequest;
-import static play.test.Helpers.routeAndCall;
-import static play.test.Helpers.running;
-import static play.test.Helpers.status;
+import static play.test.Helpers.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +32,48 @@ public class AdministrationTests {
 		thenTheListOfInscriptionsIsDisplayed(result);
 	}
 	
-//	@Test
-//	public void shouldGenerateABadgeForAnInscription() {
-//		Inscription inscription = givenIHaveSelectedAnInscription();
-//		
-//		Result result = whenIGenerateABadge(inscription);
-//		
-//		thenTheBadgeIsGenerated
-//	}
+	@Test
+	public void shouldGenerateABadgeForAnInscription() {
+		Inscription inscription = givenIHaveSelectedAnInscription();
+		
+		Result result = whenIGenerateABadge(inscription.getId());
+		
+		thenTheBadgeIsGenerated(result);
+	}
+
+	private void thenTheBadgeIsGenerated(Result result) {
+		assertThat(status(result)).isEqualTo(OK);
+		assertThat(contentType(result)).isEqualTo("application/pdf");
+	}
+
+	private Result whenIGenerateABadge(int idInscription) {
+		Result result = null;
+
+		// c'est moche, mais seule façon trouvée pour passer des données et éviter d'encapsuler tous les appels 
+		final List<Object> arguments = new ArrayList();
+		arguments.add(result);
+		arguments.add(idInscription);
+
+		running(fakeApplicationOverloaded(), new Runnable() {
+			@Override
+			public void run() {
+				JsonNode node = Json.toJson((int) arguments.get(1));
+				FakeRequest fakeRequest = fakeRequest(POST, "/admin/badge")
+						.withJsonBody(node);
+				arguments.set(0, routeAndCall(fakeRequest));
+			}
+		});
+
+		return (Result) arguments.get(0);
+	}
+
+	private Inscription givenIHaveSelectedAnInscription() {
+		Inscription inscription = new Inscription();
+		inscription.setNom("Durand");
+		inscription.setPrenom("Fernand");
+		inscription.setEmail("f.d@df.fr");
+		return inscription;
+	}
 
 	private void thenTheListOfInscriptionsIsDisplayed(Result result) {
 		assertThat(status(result)).isEqualTo(OK);

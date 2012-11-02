@@ -13,6 +13,8 @@ import static play.mvc.Results.*;
 
 import services.Repository;
 import views.html.admin;
+import views.html.template;
+import util.pdf.PDF;
 
 
 public class Administration extends Controller {
@@ -24,4 +26,9 @@ public class Administration extends Controller {
 		List<Inscription> inscriptions = repository.getInscriptions();
 		return ok(admin.render(inscriptions));
   	}
+	
+	@Transactional
+	public static Result generateBadge() {
+		return PDF.ok(template.render());
+	}
 }

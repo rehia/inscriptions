@@ -1,0 +1,1 @@
+web: target/start -Dhttp.port=${PORT} ${JAVA_OPTS} -Ddb.default.url=${DB_URI} -Ddb.default.user=${DB_USER} -Ddb.default.password{DB_PASS}
