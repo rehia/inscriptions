@@ -1,0 +1,40 @@
+@(inscriptions: List[Inscription])
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@main(title = "Agile Tour Montpellier 2012") {
+    
+			<h2>Administration</h2>
+			
+			<table class="table table-striped">
+				<caption>Liste des inscrits</caption>
+				<thead>
+					<tr>
+						<th></th>
+						<th>Nom</th>
+						<th>Prénom</th>
+						<th>Email</th>
+						<th>Twitter</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for(inscription <- inscriptions) {
+					  <tr>
+					  	<td><input type="checkbox" class="checkSelection" name="nameSelected_@inscription.getId()" /></td>
+					  	<td>@inscription.getNom()</td>
+					  	<td>@inscription.getPrenom()</td>
+					  	<td>@inscription.getEmail()</td>
+					  	<td>@inscription.getTwitter()</td>
+					  </tr>
+					} 
+				</tbody>
+			</table>
+			
+			<div class="btn-toolbar">
+			  <div class="btn-group">
+			    <button class="btn">Générer badge</button>
+			  </div>
+			</div>
+    
+}
