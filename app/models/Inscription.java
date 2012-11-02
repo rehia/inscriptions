@@ -1,19 +1,48 @@
 package models;
 
 import play.data.validation.Constraints.*;
+import javax.persistence.*;
 
+@Entity(name = "inscriptions")
+@SequenceGenerator(name = "inscriptions_sequence", sequenceName = "inscriptions_sequence")
 public class Inscription {
-	@Required public String nom;
-	@Required public String prenom;
-	@Required @Email public String email;
-	public String twitter;
-	public String entreprise;
-	public String fonction;
-	public String niveauAgile;
-	@Required public Boolean acceptePourMailsSponsors;
-	@Required public Boolean acceptePourMailsOrganisation;
 	
-
+	@Id
+	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "inscriptions_sequence")
+	private int id;
+	
+	@Required
+	@Column(name = "nom", nullable = false, length = 50)
+	public String nom;
+	
+	@Required
+	@Column(name = "prenom", nullable = false, length = 50)
+	public String prenom;
+	
+	@Required
+	@Email
+	@Column(name = "email", nullable = false, length = 255)
+	public String email;
+	
+	@Column(name = "twitter", length = 50)
+	public String twitter;
+	
+	@Column(name = "entreprise", length = 100)
+	public String entreprise;
+	
+	@Column(name = "fonction", length = 100)
+	public String fonction;
+	
+	@Column(name = "niveauagile", length = 15)
+	public String niveauAgile;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id= id;
+	}
 	public String getNom() {
 		return nom;
 	}
@@ -55,17 +84,5 @@ public class Inscription {
 	}
 	public void setNiveauAgile(String niveauAgile) {
 		this.niveauAgile = niveauAgile;
-	}
-	public Boolean getAcceptePourMailsSponsors() {
-		return acceptePourMailsSponsors;
-	}
-	public void setAcceptePourMailsSponsors(Boolean acceptePourMailsSponsors) {
-		this.acceptePourMailsSponsors = acceptePourMailsSponsors;
-	}
-	public Boolean getAcceptePourMailsOrganisation() {
-		return acceptePourMailsOrganisation;
-	}
-	public void setAcceptePourMailsOrganisation(Boolean acceptePourMailsOrganisation) {
-		this.acceptePourMailsOrganisation = acceptePourMailsOrganisation;
 	}
 }
