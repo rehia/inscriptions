@@ -33,8 +33,21 @@
 			
 			<div class="btn-toolbar">
 			  <div class="btn-group">
-			    <button class="btn">Générer badge</button>
+			    <button class="btn" id="generateBadge">Générer badge</button>
 			  </div>
+			  
 			</div>
-    
+    		
+    		<script type="text/javascript">
+				$(document).ready(function() {
+					$("#generateBadge").click(function(){
+						var selectedArray = $(".checkSelection:checked").map(function() {
+  												return this.name.replace("nameSelected_", "");
+											});						
+						$.post('admin/badge', selectedArray, function(retData){
+ 							$("body").append("<iframe src='/admin/tmp/" + retData + "' style='display: none;' ></iframe>");
+						});
+					});
+				});
+			</script>
 }

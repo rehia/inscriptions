@@ -1,5 +1,12 @@
 package controllers;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,6 +36,29 @@ public class Administration extends Controller {
 	
 	@Transactional
 	public static Result generateBadge() {
-		return PDF.ok(template.render());
+		
+		File generatedPDF = null;
+		OutputStream out = null;
+		try {
+			File tempDirectory = new File("tmp");
+			
+			generatedPDF = File.createTempFile("badge", ".pdf", tempDirectory);
+			out = new FileOutputStream(generatedPDF);
+			PDF.toStream(template.render(), out);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (out != null)
+				try {
+					out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+		}
+		
+		return ok(generatedPDF.getName());
 	}
 }

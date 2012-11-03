@@ -7,13 +7,18 @@ import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.POST;
 import static play.test.Helpers.GET;
 import static play.test.Helpers.*;
+import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsNot.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import models.Inscription;
 
 import org.codehaus.jackson.JsonNode;
+import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,10 +45,14 @@ public class AdministrationTests {
 		
 		thenTheBadgeIsGenerated(result);
 	}
+	
 
 	private void thenTheBadgeIsGenerated(Result result) {
 		assertThat(status(result)).isEqualTo(OK);
-		assertThat(contentType(result)).isEqualTo("application/pdf");
+		assertThat(contentAsString(result)).containsIgnoringCase("pdf");
+		File generatedPDF = new File("tmp\\" + contentAsString(result));
+		assertThat(generatedPDF.exists());
+		assertThat(generatedPDF.length()).isGreaterThan(0);
 	}
 
 	private Result whenIGenerateABadge(int idInscription) {

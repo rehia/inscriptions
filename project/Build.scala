@@ -17,7 +17,8 @@ object ApplicationBuild extends Build {
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
       resolvers += Resolver.url("My GitHub Play Repository", url("http://www.joergviola.de/releases/"))(Resolver.ivyStylePatterns),
-      ebeanEnabled := false 
+      ebeanEnabled := false,
+      playAssetsDirectories <+= baseDirectory / "tmp"
     )
 
 }
