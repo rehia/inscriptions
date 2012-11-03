@@ -16,3 +16,4 @@ dist
 .target
 *.txt
 conf/protected.conf
+bin

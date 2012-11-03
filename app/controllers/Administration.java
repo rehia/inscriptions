@@ -42,6 +42,9 @@ public class Administration extends Controller {
 		try {
 			File tempDirectory = new File("tmp");
 			
+			if (!tempDirectory.exists())
+				tempDirectory.mkdir();
+			
 			generatedPDF = File.createTempFile("badge", ".pdf", tempDirectory);
 			out = new FileOutputStream(generatedPDF);
 			PDF.toStream(template.render(), out);
