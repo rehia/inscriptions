@@ -6,7 +6,7 @@
 @main(title = "Agile Tour Montpellier 2012") {
     
 			<h2>Administration</h2>
-			
+			<form id="formSelection" method="POST">
 			<table class="table table-striped">
 				<caption>Liste des inscrits</caption>
 				<thead>
@@ -30,6 +30,7 @@
 					} 
 				</tbody>
 			</table>
+			</form>
 			
 			<div class="btn-toolbar">
 			  <div class="btn-group">
@@ -41,12 +42,15 @@
     		<script type="text/javascript">
 				$(document).ready(function() {
 					$("#generateBadge").click(function(){
-						var selectedArray = $(".checkSelection:checked").map(function() {
-  												return this.name.replace("nameSelected_", "");
-											});						
-						$.post('admin/badge', selectedArray, function(retData){
- 							$("body").append("<iframe src='/admin/tmp/" + retData + "' style='display: none;' ></iframe>");
-						});
+						//var selectedArray = $(".checkSelection:checked").map(function() {
+  												//return this.name.replace("nameSelected_", "");
+											//});						
+						//$.post('admin/badge', selectedArray, function(retData){
+ 							//$("body").append("<iframe src='/admin/tmp/" + retData + "' style='display: none;' ></iframe>");
+						//});
+						
+						$("#formSelection").attr("action", "/admin/badge");
+						$("#formSelection").submit();
 					});
 				});
 			</script>

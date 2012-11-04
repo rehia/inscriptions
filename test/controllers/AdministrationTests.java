@@ -13,7 +13,9 @@ import static org.hamcrest.core.IsNot.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import models.Inscription;
 
@@ -49,10 +51,7 @@ public class AdministrationTests {
 
 	private void thenTheBadgeIsGenerated(Result result) {
 		assertThat(status(result)).isEqualTo(OK);
-		assertThat(contentAsString(result)).containsIgnoringCase("pdf");
-		File generatedPDF = new File("tmp\\" + contentAsString(result));
-		assertThat(generatedPDF.exists());
-		assertThat(generatedPDF.length()).isGreaterThan(0);
+		assertThat(contentAsBytes(result).length).isGreaterThan(0);
 	}
 
 	private Result whenIGenerateABadge(int idInscription) {
@@ -61,14 +60,15 @@ public class AdministrationTests {
 		// c'est moche, mais seule façon trouvée pour passer des données et éviter d'encapsuler tous les appels 
 		final List<Object> arguments = new ArrayList();
 		arguments.add(result);
-		arguments.add(idInscription);
+		arguments.add("nameSelected_" + idInscription);
 
 		running(fakeApplicationOverloaded(), new Runnable() {
 			@Override
 			public void run() {
-				JsonNode node = Json.toJson((int) arguments.get(1));
+				Map<String, String> map = new HashMap<String, String>();
+				map.put((String) arguments.get(1), "on"); 
 				FakeRequest fakeRequest = fakeRequest(POST, "/admin/badge")
-						.withJsonBody(node);
+						.withFormUrlEncodedBody(map);
 				arguments.set(0, routeAndCall(fakeRequest));
 			}
 		});

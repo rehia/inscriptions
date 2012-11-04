@@ -12,7 +12,8 @@ object ApplicationBuild extends Build {
        "org.hibernate" % "hibernate-entitymanager" % "4.1.7.Final",
        "postgresql" % "postgresql" % "9.1-901.jdbc4",
        "org.mockito" % "mockito-all" % "1.9.5",
-       "pdf" % "pdf_2.9.1" % "0.3"
+       "pdf" % "pdf_2.9.1" % "0.3",
+       "com.itextpdf" % "itextpdf" % "5.1.3"
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
