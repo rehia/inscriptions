@@ -1,7 +1,14 @@
 package models;
 
-import play.data.validation.Constraints.*;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+
+import play.data.validation.Constraints.Email;
+import play.data.validation.Constraints.Required;
 
 @Entity(name = "inscriptions")
 @SequenceGenerator(name = "inscriptions_sequence", sequenceName = "inscriptions_sequence")
@@ -29,6 +36,7 @@ public class Inscription {
 	public String twitter;
 	
 	@Column(name = "entreprise", length = 100)
+	
 	public String entreprise;
 	
 	@Column(name = "fonction", length = 100)
@@ -36,6 +44,9 @@ public class Inscription {
 	
 	@Column(name = "niveauagile", length = 15)
 	public String niveauAgile;
+
+	@Column(name = "barcode", length = 30)
+	public String barCode;
 	
 	public int getId() {
 		return id;
@@ -84,5 +95,11 @@ public class Inscription {
 	}
 	public void setNiveauAgile(String niveauAgile) {
 		this.niveauAgile = niveauAgile;
+	}
+	public String getBarCode() {
+		return barCode;
+	}
+	public void setBarCode(String barCode) {
+		this.barCode = barCode;
 	}
 }

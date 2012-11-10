@@ -1,4 +1,4 @@
-@(json: String)
+@(inscriptionId: Integer)
 
 <!DOCTYPE html>
 
@@ -11,7 +11,7 @@
 	    Image: <img src="/public/images/favicon.png"/><br/>
 	    Hello world! <br/>
 	     <br/>
-	     	@json
+	     	@inscriptionId
 	     <br/>
 	    <div class="blue">
 	    	This is blue text
@@ -23,7 +23,9 @@
 			</tr>
 			<tr>
 				<td>3</td>
-				<td>4</td>
+				<td>
+					<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Datamatrix.svg/220px-Datamatrix.svg.png" />
+				</td>
 			</tr>
 		</table>
     </body>

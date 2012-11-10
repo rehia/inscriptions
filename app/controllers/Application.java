@@ -1,16 +1,14 @@
 package controllers;
 
-import models.*;
+import javax.inject.Inject;
+
+import models.Inscription;
 import play.data.Form;
-import play.data.validation.Validation;
 import play.db.jpa.Transactional;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Result;
 import services.Repository;
-import javax.inject.*;
-
-import org.hibernate.TypeMismatchException;
-
-import views.html.*;
+import views.html.index;
 
 public class Application extends Controller {
 	

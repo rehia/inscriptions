@@ -1,39 +1,27 @@
 package controllers;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
+import helpers.PDF;
+
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.codehaus.jackson.JsonNode;
+import models.Inscription;
+import play.db.jpa.Transactional;
+import play.mvc.Controller;
+import play.mvc.Http.Request;
+import play.mvc.Result;
+import services.Repository;
+import views.html.admin;
+import views.html.template;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfCopyFields;
 import com.itextpdf.text.pdf.PdfReader;
-
-import models.Inscription;
-
-import play.db.jpa.Transactional;
-import play.mvc.Controller;
-import play.mvc.Http.RequestBody;
-import play.mvc.Result;
-import static play.mvc.Results.*;
-
-import services.Repository;
-import views.html.admin;
-import views.html.template;
-import util.pdf.PDF;
 
 
 public class Administration extends Controller {
@@ -43,24 +31,59 @@ public class Administration extends Controller {
 	@Transactional
 	public static Result admin() {
 		List<Inscription> inscriptions = repository.getInscriptions();
-		return ok(admin.render(inscriptions));
+		return ok(admin.render(inscriptions, ""));
   	}
 	
 	@Transactional
 	public static Result generateBadge() throws DocumentException, IOException {
-		Map<String, String[]> selectedInscriptions = request().body().asFormUrlEncoded();
+		
+		byte[] finalBadge = generateAndMergeBadges(getSelectedInscriptionId(request()));
+		return ok(finalBadge).as("application/pdf");		
+	}
 
+	protected static byte[] generateAndMergeBadges(Set<Integer> selectedInscriptions)
+			throws DocumentException, IOException {
 		ByteArrayOutputStream finalOutput = new ByteArrayOutputStream();
 		PdfCopyFields copy = new PdfCopyFields(finalOutput);
 		
-		for (String inscriptionId : selectedInscriptions.keySet()) {
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			PDF.toStream(template.render(inscriptionId), output);
-			copy.addDocument(new PdfReader(output.toByteArray()));
-		}
-		
-		copy.close();
+		try {			
+			for (Integer inscriptionId : selectedInscriptions) {
+				copy.addDocument(generateSingleBadge(inscriptionId));
+			}
+		} finally {
+			copy.close();
+		}		
 						
-		return ok(finalOutput.toByteArray()).as("application/pdf");		
+		return finalOutput.toByteArray();
+	}
+
+	protected static PdfReader generateSingleBadge(Integer inscriptionId)
+			throws IOException {
+		byte[] output = PDF.toBytes(template.render(inscriptionId));
+		return new PdfReader(output);
+	}
+
+	protected static Set<Integer> getSelectedInscriptionId(Request request) {
+		Set<Integer> selectedInscriptionIds = new HashSet<Integer>();
+		
+		for (String checkboxId : getCheckedCheckboxesId(request)) {
+			selectedInscriptionIds.add(getInscriptionIdFromCheckboxId(checkboxId));
+		}
+		return selectedInscriptionIds;
+	}
+
+	protected static int getInscriptionIdFromCheckboxId(String checkboxId) {
+		return Integer.parseInt(checkboxId.replaceAll("nameSelected_", ""));
+	}
+
+	protected static Set<String> getCheckedCheckboxesId(Request request) {
+		return request.body().asFormUrlEncoded().keySet();
+	}
+	
+	@Transactional
+	public static Result updateInscriptions() {
+		int inscriptionsAddedCount = repository.updateInscriptions();
+		List<Inscription> inscriptions = repository.getInscriptions();
+		return ok(admin.render(inscriptions, inscriptionsAddedCount + " inscriptions ajoutées"));
 	}
 }

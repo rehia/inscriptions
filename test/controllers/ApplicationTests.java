@@ -3,6 +3,8 @@ package controllers;
 import static helpers.Helpers.*;
 import static org.junit.Assert.*;
 
+import helpers.FakeDataProvider;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,34 +49,8 @@ public class ApplicationTests {
 		thenTheInscriptionIsValid(result);
 	}
 
-	@Test
-	public void shouldNotSubmitInscriptionWhenInvalid() {
-
-		Inscription inscription = givenIHaveAValidInscription();
-		inscription = givenInscriptionIsInvalid(inscription);
-
-		Result result = whenTheInscriptionIsSubmited(inscription);
-
-		thenTheInscriptionIsNotValid(result);
-	}
-
-	private Inscription givenInscriptionIsInvalid(Inscription inscription) {
-		inscription.email = null;
-		controllers.Application.inscriptionForm.reject("email",
-				"email is required");
-
-		return inscription;
-	}
-
-	private void thenTheInscriptionIsNotValid(Result result) {
-		assertThat(status(result)).isEqualTo(BAD_REQUEST);
-		assertThat(contentAsString(result)).contains("inscription non valide");
-	}
-
-	private void thenTheInscriptionIsValid(Result result) {
-		verify(Application.repository).save(any(Inscription.class));
-		assertThat(status(result)).isEqualTo(OK);
-		assertThat(contentAsString(result)).contains(("inscription valid"));
+	private Inscription givenIHaveAValidInscription() {
+		return FakeDataProvider.getAnExistingInscription();
 	}
 
 	private Result whenTheInscriptionIsSubmited(Inscription inscription) {
@@ -98,12 +74,34 @@ public class ApplicationTests {
 		return (Result) arguments.get(0);
 	}
 
-	private Inscription givenIHaveAValidInscription() {
-		Inscription inscription = new Inscription();
-		inscription.setNom("Durand");
-		inscription.setPrenom("Fernand");
-		inscription.setEmail("f.d@df.fr");
+	private void thenTheInscriptionIsValid(Result result) {
+		assertThat(status(result)).isEqualTo(OK).describedAs(contentAsString(result));
+		assertThat(contentAsString(result)).contains(("inscription valid"));
+		verify(Application.repository).save(any(Inscription.class));
+	}
+
+	@Test
+	public void shouldNotSubmitInscriptionWhenInvalid() {
+
+		Inscription inscription = givenIHaveAValidInscription();
+		inscription = givenInscriptionIsInvalid(inscription);
+
+		Result result = whenTheInscriptionIsSubmited(inscription);
+
+		thenTheInscriptionIsNotValid(result);
+	}
+
+	private Inscription givenInscriptionIsInvalid(Inscription inscription) {
+		inscription.email = null;
+		controllers.Application.inscriptionForm.reject("email",
+				"email is required");
+
 		return inscription;
+	}
+
+	private void thenTheInscriptionIsNotValid(Result result) {
+		assertThat(status(result)).isEqualTo(BAD_REQUEST);
+		assertThat(contentAsString(result)).contains("inscription non valide");
 	}
 
 }

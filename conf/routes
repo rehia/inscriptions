@@ -8,8 +8,8 @@ POST	/							controllers.Application.submit()
 
 # Admin
 GET     /admin                      controllers.Administration.admin()
-GET		/admin/badge				controllers.Administration.generateBadge()
 POST	/admin/badge				controllers.Administration.generateBadge()
+POST		/admin/inscriptions			controllers.Administration.updateInscriptions()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

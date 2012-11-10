@@ -1,5 +1,7 @@
 package module;
 
+import helpers.FakeDataProvider;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,27 +36,11 @@ public class DependenciesTest extends Dependencies {
 			}
 		}).when(repository).save(any(Inscription.class));
 		
-		when(repository.getInscriptions()).thenReturn(getInscriptions());
+		when(repository.getInscriptions()).thenReturn(FakeDataProvider.getSomeExistingInscriptions());
+		
+		when(repository.updateInscriptions()).thenReturn(2);
 		
 		return repository;
-	}
-
-	private List<Inscription> getInscriptions() {
-		List<Inscription> inscriptions = new ArrayList<Inscription>();
-		
-		Inscription durand = new Inscription();
-		durand.setNom("Durand");
-		durand.setPrenom("Fernand");
-		durand.setEmail("f.d@df.fr");
-		inscriptions.add(durand);
-
-		Inscription dupont = new Inscription();
-		dupont.setNom("Dupont");
-		dupont.setPrenom("Bernard");
-		dupont.setEmail("u_I@uj.fr");
-		inscriptions.add(dupont);
-		
-		return inscriptions;
 	}
 
 }

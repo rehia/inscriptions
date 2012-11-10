@@ -1,4 +1,4 @@
-@(inscriptions: List[Inscription])
+@(inscriptions: List[Inscription], message: String)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -6,7 +6,7 @@
 @main(title = "Agile Tour Montpellier 2012") {
     
 			<h2>Administration</h2>
-			<form id="formSelection" method="POST">
+			<form id="formSelection">
 			<table class="table table-striped">
 				<caption>Liste des inscrits</caption>
 				<thead>
@@ -35,23 +35,40 @@
 			<div class="btn-toolbar">
 			  <div class="btn-group">
 			    <button class="btn" id="generateBadge">Générer badge</button>
+			    <button class="btn" id="updateInscriptions">Mettre à jour les inscriptions</button>
 			  </div>
 			  
+			</div>
+			
+			<div id="dialog" title="Basic dialog">
+    			<p>@message</p>
 			</div>
     		
     		<script type="text/javascript">
 				$(document).ready(function() {
-					$("#generateBadge").click(function(){
-						//var selectedArray = $(".checkSelection:checked").map(function() {
-  												//return this.name.replace("nameSelected_", "");
-											//});						
-						//$.post('admin/badge', selectedArray, function(retData){
- 							//$("body").append("<iframe src='/admin/tmp/" + retData + "' style='display: none;' ></iframe>");
-						//});
-						
+					$("#generateBadge").click(function(){						
 						$("#formSelection").attr("action", "/admin/badge");
+						$("#formSelection").attr("method", "POST");
 						$("#formSelection").submit();
 					});
+					
+					$("#updateInscriptions").click(function(){						
+						$("#formSelection").attr("action", "/admin/inscriptions");
+						$("#formSelection").attr("method", "POST");
+						$("#formSelection").submit();
+					});
+					
+					if ('@message' != '') {
+						$("#dialog").dialog({
+							buttons: {
+								Ok: function() {
+									$(this).dialog( "close" );
+								}
+							}
+						});
+					}
 				});
+				
+				
 			</script>
 }
