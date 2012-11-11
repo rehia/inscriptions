@@ -24,7 +24,7 @@
           <a class="brand" href="#">Project name</a>
           <div class="nav-collapse collapse">
             <ul class="nav pull-right">
-	          @if(username.length() > 0) {
+	          @if(username != null && username.length() > 0) {
 	            <li class="navbar-text">@username logged in</li>
             	<li><a href="@routes.Application.logout()">Logout</a>
 	          } else {

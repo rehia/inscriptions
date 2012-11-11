@@ -20,7 +20,7 @@ public class Application extends Controller {
 	
 	@Transactional
 	public static Result index() {
-		session().put("connectedUser", "");
+		session().put("fake", "fake");
 		return ok(index.render(inscriptionForm, "", session().get("connectedUser")));
   	}
 
