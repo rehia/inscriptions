@@ -65,7 +65,7 @@ public class ApplicationTests {
 			@Override
 			public void run() {
 				JsonNode node = Json.toJson((Inscription) arguments.get(1));
-				FakeRequest fakeRequest = fakeRequest(POST, "/")
+				FakeRequest fakeRequest = fakeRequest(POST, "/").withSession("connectedUser", "")
 						.withJsonBody(node);
 				arguments.set(0, routeAndCall(fakeRequest));
 			}

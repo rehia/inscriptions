@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import models.Inscription;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
+import play.mvc.Security;
 import play.mvc.Http.Request;
 import play.mvc.Result;
 import services.Repository;
@@ -23,7 +24,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfCopyFields;
 import com.itextpdf.text.pdf.PdfReader;
 
-
+@Security.Authenticated(Secured.class)
 public class Administration extends Controller {
 
 	@Inject static Repository repository;
@@ -31,7 +32,7 @@ public class Administration extends Controller {
 	@Transactional
 	public static Result admin() {
 		List<Inscription> inscriptions = repository.getInscriptions();
-		return ok(admin.render(inscriptions, ""));
+		return ok(admin.render(inscriptions, "", session().get("connectedUser")));
   	}
 	
 	@Transactional
@@ -84,6 +85,6 @@ public class Administration extends Controller {
 	public static Result updateInscriptions() {
 		int inscriptionsAddedCount = repository.updateInscriptions();
 		List<Inscription> inscriptions = repository.getInscriptions();
-		return ok(admin.render(inscriptions, inscriptionsAddedCount + " inscriptions ajoutées"));
+		return ok(admin.render(inscriptions, inscriptionsAddedCount + " inscriptions ajoutées", session().get("connectedUser")));
 	}
 }

@@ -1,11 +1,11 @@
-@(inscriptionForm: Form[Inscription], message: String)
+@(inscriptionForm: Form[Inscription], message: String, username: String)
 
 @import helper._
 @import helper.twitterBootstrap._
 
 @implicitField = @{ FieldConstructor(bootstrapInput.f)} 
 
-@main(title = "Agile Tour Montpellier 2012") {
+@main("Agile Tour Montpellier 2012", username) {
     
 			<div class="hero-unit">
 			    <h1>Agile Tour Montpellier 2012</h1>

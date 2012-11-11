@@ -13,6 +13,8 @@ import static play.test.Helpers.routeAndCall;
 import static play.test.Helpers.running;
 import static play.test.Helpers.status;
 
+import helpers.FakeDataProvider;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +53,7 @@ public class AdministrationTests {
 		running(fakeApplicationOverloaded(), new Runnable() {
 			@Override
 			public void run() {
-				FakeRequest fakeRequest = fakeRequest(GET, "/admin");
+				FakeRequest fakeRequest = fakeRequest(GET, "/admin").withSession("connectedUser", "Admin");
 				arguments.set(0, routeAndCall(fakeRequest));
 			}
 		});
@@ -75,11 +77,7 @@ public class AdministrationTests {
 	}
 
 	private Inscription givenIHaveSelectedAnInscription() {
-		Inscription inscription = new Inscription();
-		inscription.setNom("Durand");
-		inscription.setPrenom("Fernand");
-		inscription.setEmail("f.d@df.fr");
-		return inscription;
+		return FakeDataProvider.getAnExistingInscription();
 	}
 
 	private Result whenIGenerateABadge(int idInscription) {
@@ -96,7 +94,7 @@ public class AdministrationTests {
 			public void run() {
 				Map<String, String> map = new HashMap<String, String>();
 				map.put((String) arguments.get(1), "on");
-				FakeRequest fakeRequest = fakeRequest(POST, "/admin/badge")
+				FakeRequest fakeRequest = fakeRequest(POST, "/admin/badge").withSession("connectedUser", "Admin")
 						.withFormUrlEncodedBody(map);
 				arguments.set(0, routeAndCall(fakeRequest));
 			}
@@ -135,7 +133,7 @@ public class AdministrationTests {
 			@Override
 			public void run() {
 				FakeRequest fakeRequest = fakeRequest(POST,
-						"/admin/inscriptions");
+						"/admin/inscriptions").withSession("connectedUser", "Admin");
 				arguments.set(0, routeAndCall(fakeRequest));
 			}
 		});

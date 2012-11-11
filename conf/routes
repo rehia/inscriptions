@@ -5,11 +5,14 @@
 # Home page
 GET     /                           controllers.Application.index()
 POST	/							controllers.Application.submit()
+GET		/login						controllers.Application.login()
+POST	/authenticate				controllers.Application.authenticate()
+GET		/logout						controllers.Application.logout()
 
 # Admin
 GET     /admin                      controllers.Administration.admin()
 POST	/admin/badge				controllers.Administration.generateBadge()
-POST		/admin/inscriptions			controllers.Administration.updateInscriptions()
+POST	/admin/inscriptions			controllers.Administration.updateInscriptions()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

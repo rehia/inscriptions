@@ -1,0 +1,26 @@
+@(loginForm: Form[Application.Login])
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@implicitField = @{ FieldConstructor(bootstrapInput.f)} 
+
+@main("Agile Tour Montpellier 2012", "") {
+    
+		
+			@helper.form(action = routes.Application.authenticate(), 'method -> "POST", 'id -> "login", 'class -> "form-horizontal") {
+        
+			<div>
+				<p>@inputPassword(
+		                loginForm("password"), 
+		                '_label -> "Password"
+		            )
+                	<input type="password" name="password" placeholder="Password">
+            	</p>
+                <div class="actions">
+		            <input type="submit" class="btn primary" value="Me Loguer">
+		        </div>				
+			</div>
+		    }
+    
+}

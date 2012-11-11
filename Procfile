@@ -1,1 +1,1 @@
-web: target/start -Dhttp.port=${PORT} ${JAVA_OPTS} -Ddb.default.url=${DB_URL} -Deventbrite.url=${EVENTBRITE_URL} -Deventbrite.applicationKey=${EVENTBRITE_APPKEY} -Deventbrite.userKey=${EVENTBRITE_USERKEY} -Deventbrite.eventId=${EVENTBRITE_EVENTID}
+web: target/start -Dhttp.port=${PORT} ${JAVA_OPTS} -Ddb.default.url=${DB_URL} -Deventbrite.url=${EVENTBRITE_URL} -Deventbrite.applicationKey=${EVENTBRITE_APPKEY} -Deventbrite.userKey=${EVENTBRITE_USERKEY} -Deventbrite.eventId=${EVENTBRITE_EVENTID} -Dadmin.password=${ADMIN_PASS}
