@@ -64,7 +64,7 @@ public class Application extends Controller {
         public String validate() {
         	Configuration configuration = Play.application().configuration();
             if(!password.equals(configuration.getString("admin.password"))) {
-                return "Invalid user or password : " + configuration.getString("admin.password") + " - " + password;
+                return "Invalid user or password : ";
             }
             return null;
         }
