@@ -15,6 +15,6 @@ public class Secured extends Security.Authenticator {
 	    @Override
 	    public Result onUnauthorized(Context ctx) {
 	        //flash("not logged in", "You're not logged in !");
-	        return redirect(routes.Application.index());
+	        return redirect(routes.Application.login());
 	    }
 }

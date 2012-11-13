@@ -38,12 +38,18 @@ public class Application extends Controller {
 	}
 	
 	public static Result login() {
-		return ok(login.render(form(Login.class)));
+		return ok(login.render(form(Login.class), ""));
 	}
 	
 	public static Result authenticate() {
-		session("connectedUser", "Admin");
-		return redirect(routes.Administration.admin());
+		Form<Login> loginForm = form(Login.class).bindFromRequest();
+		
+		if(loginForm.hasErrors()) {
+            return badRequest(login.render(loginForm, loginForm.errorsAsJson().toString()));
+        } else {
+        	session("connectedUser", "Admin");
+			return redirect(routes.Administration.admin());
+        }
 	}
 	
     public static Result logout() {
@@ -57,8 +63,8 @@ public class Application extends Controller {
         
         public String validate() {
         	Configuration configuration = Play.application().configuration();
-            if(password.equals(configuration.getString("admin.password"))) {
-                return "Invalid user or password";
+            if(!password.equals(configuration.getString("admin.password"))) {
+                return "Invalid user or password : " + configuration.getString("admin.password") + " - " + password;
             }
             return null;
         }
