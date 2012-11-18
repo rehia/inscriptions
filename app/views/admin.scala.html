@@ -19,7 +19,11 @@
 			  </div>
 			  
 			</div>
-			  <div><strong>@inscriptions.size() personnes</strong></div>
+			<div>
+				<span><a id="selectAll" href="">Tout sélectionner</a></span>
+				<span><a id="deselectAll" href="">Tout désélectionner</a></span>
+			  <span><strong>@inscriptions.size() personnes</strong></span>
+			</div>
 			<form id="formSelection">
 			<table class="table table-striped">
 				<caption>Liste des inscrits</caption>
@@ -82,6 +86,16 @@
 							action = action + "/inscriptions/" + category;
 						
 						$(location).attr('href', action);			
+					});
+					
+					$("#selectAll").click(function(){
+						$(".checkSelection").attr('checked', true);	
+						return false;
+					});
+					
+					$("#deselectAll").click(function(){
+						$(".checkSelection").attr('checked', false);	
+						return false;
 					});
 				});
 				
