@@ -66,7 +66,7 @@ public class EventbriteAccessor implements ExternalSourceAccessor {
 		List<Inscription> inscriptions = new ArrayList<Inscription>();
 		for (Attendee attendee : message.attendees) {
 			AttendeeElement element = attendee.inscription;
-			inscriptions.add(ModelFactory.createInscription(element.lastName, element.firstName, element.email, element.barCode, element.jobTitle, element.company));
+			inscriptions.add(ModelFactory.createInscription(element.lastName, element.firstName, element.email, element.barCode, element.jobTitle, element.company, element.ticketId));
 		}
 		return inscriptions;
 	}

@@ -5,7 +5,7 @@ import java.util.Map;
 import play.test.FakeApplication;
 
 
-public class Helpers {
+public class PlayTestHelpers {
 	
 	public static FakeApplication fakeApplicationOverloaded() {
 		

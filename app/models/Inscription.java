@@ -17,7 +17,7 @@ public class Inscription {
 	@Id
 	@Column(name = "id", nullable = false)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "inscriptions_sequence")
-	private int id;
+	public int id;
 	
 	@Required
 	@Column(name = "nom", nullable = false, length = 50)
@@ -47,6 +47,15 @@ public class Inscription {
 
 	@Column(name = "barcode", length = 30)
 	public String barCode;
+	
+	@Column(name = "categorie", length = 30)
+	public String categorie;
+
+	public static final String INSCRIT = "inscrit";
+
+	public static final String ORGANISATEUR = "organisateur";
+
+	public static final String SPEAKER = "orateur";
 	
 	public int getId() {
 		return id;
@@ -101,5 +110,20 @@ public class Inscription {
 	}
 	public void setBarCode(String barCode) {
 		this.barCode = barCode;
+	}
+	public boolean isOrganizer() {
+		return verifyCategory(ORGANISATEUR);
+	}
+	protected boolean verifyCategory(String categorie) {
+		return this.categorie != null && this.categorie.equals(categorie);
+	}
+	public boolean isAttendee() {
+		return verifyCategory(INSCRIT);
+	}
+	public void setCategorie(String categorie) {
+		this.categorie = categorie;		
+	}
+	public boolean isSpeaker() {
+		return verifyCategory(SPEAKER);
 	}
 }

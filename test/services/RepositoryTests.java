@@ -2,6 +2,7 @@ package services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -125,12 +126,21 @@ public class RepositoryTests {
 	}
 	
 	private Inscription givenIHaveAnInscriptionThatIsAlreadyInLocalRepository() {
-		Query queryAll = mock(Query.class);
-		when(entityManager.createQuery(anyString())).thenReturn(queryAll);
-		when(queryAll.getResultList()).thenReturn(new ArrayList());
-		when(queryAll.getSingleResult()).thenThrow(NoResultException.class);
+		mockQueryOnInscriptions(new ArrayList<Inscription>());
 		
 		return FakeDataProvider.getAnExistingInscription();
+	}
+
+	protected void mockQueryOnInscriptions(List<Inscription> inscriptionsInRepository) {
+		Query queryAll = mock(Query.class);
+		when(entityManager.createQuery(anyString())).thenReturn(queryAll);
+		when(queryAll.getResultList()).thenReturn(inscriptionsInRepository);
+		
+		if (inscriptionsInRepository.size() == 0) {
+			when(queryAll.getSingleResult()).thenThrow(NoResultException.class);
+		} else {
+			when(queryAll.getSingleResult()).thenReturn(inscriptionsInRepository.get(0));
+		}
 	}
 
 	private Boolean whenIVerifyIfTheInscriptionExists(Inscription inscription) {
@@ -190,5 +200,35 @@ public class RepositoryTests {
 	private void thenTheInscriptionsAreNotAdded(int inscriptionsAddedCount) {
 		verify(entityManager, never()).persist(any(Inscription.class));
 		assertEquals(0, inscriptionsAddedCount);
+	}
+	
+	@Test
+	public void shouldReturnAnInscriptionWithExistingId() {
+		int inscriptionId = givenIHaveAnExistingId();
+		
+		Inscription inscription = whenIGetAnInscriptionFromId(inscriptionId);
+		
+		thenTheInscriptionIsValid(inscription);
+	}
+
+	private int givenIHaveAnExistingId() {	
+		int idInscription = 12;	
+		
+		List<Inscription> inscriptionsInRepository = new ArrayList<Inscription>();
+		Inscription inscription = FakeDataProvider.getAnExistingInscription();
+		inscription.setId(idInscription);
+		inscriptionsInRepository.add(inscription);
+		mockQueryOnInscriptions(inscriptionsInRepository);
+		
+		return idInscription;
+	}
+
+	private Inscription whenIGetAnInscriptionFromId(int inscriptionId) {
+		return repository.getInscriptionById(inscriptionId);
+	}
+
+	private void thenTheInscriptionIsValid(Inscription inscription) {
+		assertNotNull(inscription);
+		assertEquals("Durand", inscription.getNom());
 	}
 }

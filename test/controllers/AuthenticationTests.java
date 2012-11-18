@@ -1,6 +1,6 @@
 package controllers;
 
-import static helpers.Helpers.fakeApplicationOverloaded;
+import static helpers.PlayTestHelpers.fakeApplicationOverloaded;
 import static junit.framework.Assert.*;
 import static play.test.Helpers.GET;
 import static play.test.Helpers.fakeRequest;

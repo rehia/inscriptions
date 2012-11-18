@@ -17,3 +17,6 @@ dist
 *.txt
 conf/protected.conf
 bin
+Badge-3/
+public/images/bulles_autres3.png
+public/images/bulles_autres_2.png

@@ -1,6 +1,6 @@
 package services;
 
-import static helpers.Helpers.fakeApplicationOverloaded;
+import static helpers.PlayTestHelpers.fakeApplicationOverloaded;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static play.test.Helpers.PUT;
@@ -30,9 +30,14 @@ public class EventbriteAccessorTests {
 
 	private EventbriteAccessor eventbrite;
 	
-	private static final String SIMPLE_INSCRIPTION_JSON = "{\"attendees\": [{\"attendee\": {\"first_name\": \"Thierry\", \"last_name\": \"Hazard\", \"order_type\": \"Free Order\", \"created\": \"2012-10-26 02:50:17\", \"order_id\": 119300000, \"amount_paid\": \"0.00\", \"barcode\": \"119309147152822000000\", \"modified\": \"2012-10-26 02:50:41\", \"answers\": [{\"answer\": {\"answer_text\": \"Novice\", \"question\": \"Niveau de connaissances agiles\", \"question_type\": \"multiple choice\", \"question_id\": 2913746}}, {\"answer\": {\"answer_text\": \"Novice\", \"question\": \"Niveau de pratiques agiles\", \"question_type\": \"multiple choice\", \"question_id\": 2913786}}], \"id\": 152820000, \"currency\": \"EUR\", \"affiliate\": \"\", \"ticket_id\": 15720000, \"event_id\": 4609749886, \"event_date\": \"\", \"discount\": \"\", \"email\": \"thierry.Hazard@lejerk.com\", \"quantity\": 1}}]}";
-	private static final String INSCRIPTION_LIST_JSON = "{\"attendees\": [{\"attendee\":{\"first_name\": \"Thierry\",\"last_name\": \"Hazard\",\"barcode\": \"119309147152822000000\",\"email\": \"thierry.hazard@lejerk.com\"}},{\"attendee\":{\"first_name\": \"Gilbert\",\"last_name\": \"Montagné\",\"barcode\": \"119309147152822111111\",\"email\": \"gilbert@montagne.com\"}}]}";
+	private static final String ORGANIZER_TICKET_ID = "16008859";
+	private static final String ATTENDEE_TICKET_ID = "15723826";
+	private static final String SPEAKER_TICKET_ID = "16057183";
 	
+	private static final String SIMPLE_INSCRIPTION_JSON = "{\"attendees\": [{\"attendee\": {\"first_name\": \"Thierry\", \"last_name\": \"Hazard\", \"order_type\": \"Free Order\", \"created\": \"2012-10-26 02:50:17\", \"order_id\": 119300000, \"amount_paid\": \"0.00\", \"barcode\": \"119309147152822000000\", \"modified\": \"2012-10-26 02:50:41\", \"answers\": [{\"answer\": {\"answer_text\": \"Novice\", \"question\": \"Niveau de connaissances agiles\", \"question_type\": \"multiple choice\", \"question_id\": 2913746}}, {\"answer\": {\"answer_text\": \"Novice\", \"question\": \"Niveau de pratiques agiles\", \"question_type\": \"multiple choice\", \"question_id\": 2913786}}], \"id\": 152820000, \"currency\": \"EUR\", \"affiliate\": \"\", \"ticket_id\": " + ATTENDEE_TICKET_ID + " , \"event_id\": 4609749886, \"event_date\": \"\", \"discount\": \"\", \"email\": \"thierry.Hazard@lejerk.com\", \"quantity\": 1}}]}";
+	private static final String INSCRIPTION_LIST_JSON = "{\"attendees\": [{\"attendee\":{\"first_name\": \"Thierry\",\"last_name\": \"hazard\",\"barcode\": \"119309147152822000000\",\"email\": \"thierry.hazard@lejerk.com\", \"ticket_id\": 15723826}},{\"attendee\":{\"first_name\": \"Gilbert\",\"last_name\": \"Montagné\",\"barcode\": \"119309147152822111111\",\"email\": \"gilbert@montagne.com\", \"ticket_id\": 15723826}}]}";
+	private static final String ORGANIZER_JSON = "{\"attendees\": [{\"attendee\": {\"first_name\": \"Thierry\", \"last_name\": \"Hazard\", \"order_type\": \"Free Order\", \"created\": \"2012-10-26 02:50:17\", \"order_id\": 119300000, \"amount_paid\": \"0.00\", \"barcode\": \"119309147152822000000\", \"modified\": \"2012-10-26 02:50:41\", \"answers\": [{\"answer\": {\"answer_text\": \"Novice\", \"question\": \"Niveau de connaissances agiles\", \"question_type\": \"multiple choice\", \"question_id\": 2913746}}, {\"answer\": {\"answer_text\": \"Novice\", \"question\": \"Niveau de pratiques agiles\", \"question_type\": \"multiple choice\", \"question_id\": 2913786}}], \"id\": 152820000, \"currency\": \"EUR\", \"affiliate\": \"\", \"ticket_id\": " + ORGANIZER_TICKET_ID + ", \"event_id\": 4609749886, \"event_date\": \"\", \"discount\": \"\", \"email\": \"thierry.Hazard@lejerk.com\", \"quantity\": 1}}]}";
+	private static final String SPEAKER_JSON = "{\"attendees\": [{\"attendee\": {\"first_name\": \"Thierry\", \"last_name\": \"Hazard\", \"order_type\": \"Free Order\", \"created\": \"2012-10-26 02:50:17\", \"order_id\": 119300000, \"amount_paid\": \"0.00\", \"barcode\": \"119309147152822000000\", \"modified\": \"2012-10-26 02:50:41\", \"answers\": [{\"answer\": {\"answer_text\": \"Novice\", \"question\": \"Niveau de connaissances agiles\", \"question_type\": \"multiple choice\", \"question_id\": 2913746}}, {\"answer\": {\"answer_text\": \"Novice\", \"question\": \"Niveau de pratiques agiles\", \"question_type\": \"multiple choice\", \"question_id\": 2913786}}], \"id\": 152820000, \"currency\": \"EUR\", \"affiliate\": \"\", \"ticket_id\": " + SPEAKER_TICKET_ID + ", \"event_id\": 4609749886, \"event_date\": \"\", \"discount\": \"\", \"email\": \"thierry.Hazard@lejerk.com\", \"quantity\": 1}}]}";
 	
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -47,16 +52,16 @@ public class EventbriteAccessorTests {
 	public void shouldTransformJsonToInscriptions() throws IOException {
 		givenThereAreSomeInscriptions();
 		
-		List<Inscription> inscriptions = whenIGetTheseIncsriptions();
+		List<Inscription> inscriptions = whenIGetTheInscriptions();
 		
 		thenAllInscriptionsAreGathered(inscriptions);
 	}	
 
 	private void givenThereAreSomeInscriptions() throws IOException {
-		doReturn(INSCRIPTION_LIST_JSON).when(eventbrite).getAttendees();
+		prepareEventbriteGetAttendees(INSCRIPTION_LIST_JSON);
 	}
 
-	private List<Inscription> whenIGetTheseIncsriptions() {
+	private List<Inscription> whenIGetTheInscriptions() {
 		return eventbrite.getAllInscriptions();
 	}
 
@@ -119,5 +124,76 @@ public class EventbriteAccessorTests {
 			throw new RuntimeException(e);
 		}
 		
+	}
+	
+	@Test
+	public void shouldReturnAnOrganizerWhenSpecificTicketId() throws IOException {
+		givenThereIsAnOrganizer();
+		
+		List<Inscription> inscriptions = whenIGetTheInscriptions();
+		
+		thenTheInscriptionIsAnOrganizer(inscriptions.get(0));		
+		butNotAnAttendee(inscriptions.get(0));
+	}
+
+	private void butNotAnAttendee(Inscription inscription) {
+		assertFalse(inscription.isAttendee());
+	}
+
+	private void givenThereIsAnOrganizer() throws IOException {
+		prepareEventbriteGetAttendees(ORGANIZER_JSON);	
+	}
+
+	protected void prepareEventbriteGetAttendees(String json)
+			throws IOException {
+		doReturn(json).when(eventbrite).getAttendees();
+	}
+
+	private void thenTheInscriptionIsAnOrganizer(Inscription inscription) {
+		assertTrue(inscription.isOrganizer());
+	}
+	
+	@Test
+	public void shouldReturnAnAttendeeWhenSpecificTicketId() throws IOException {
+		givenThereIsAnAttendee();
+		
+		List<Inscription> inscriptions = whenIGetTheInscriptions();
+		
+		thenTheInscriptionIsAnAttendee(inscriptions.get(0));
+		butNotAnOrganizer(inscriptions.get(0));
+		andNotASpeaker(inscriptions.get(0));
+	}
+
+	private void andNotASpeaker(Inscription inscription) {
+		assertFalse(inscription.isSpeaker());
+	}
+
+	private void givenThereIsAnAttendee() throws IOException {
+		prepareEventbriteGetAttendees(SIMPLE_INSCRIPTION_JSON);	
+	}
+
+	private void thenTheInscriptionIsAnAttendee(Inscription inscription) {
+		assertTrue(inscription.isAttendee());
+	}
+
+	private void butNotAnOrganizer(Inscription inscription) {
+		assertFalse(inscription.isOrganizer());
+	}
+	
+	@Test
+	public void shouldReturnASpeakerWhenSpecificTicketId() throws IOException {
+		givenThereIsASpeaker();
+		
+		List<Inscription> inscriptions = whenIGetTheInscriptions();
+		
+		thenTheInscriptionIsASpeaker(inscriptions.get(0));
+	}
+
+	private void givenThereIsASpeaker() throws IOException {
+		prepareEventbriteGetAttendees(SPEAKER_JSON);
+	}
+
+	private void thenTheInscriptionIsASpeaker(Inscription inscription) {
+		assertTrue(inscription.isSpeaker());
 	}
 }

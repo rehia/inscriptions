@@ -1,6 +1,6 @@
 package controllers;
 
-import static helpers.Helpers.*;
+import static helpers.PlayTestHelpers.*;
 import static org.junit.Assert.*;
 
 import helpers.FakeDataProvider;

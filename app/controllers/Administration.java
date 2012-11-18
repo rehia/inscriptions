@@ -46,21 +46,20 @@ public class Administration extends Controller {
 			throws DocumentException, IOException {
 		ByteArrayOutputStream finalOutput = new ByteArrayOutputStream();
 		PdfCopyFields copy = new PdfCopyFields(finalOutput);
+					
+		for (Integer inscriptionId : selectedInscriptions) {
+			Inscription inscription = repository.getInscriptionById(inscriptionId);
+			copy.addDocument(generateSingleBadge(inscription));
+		}
 		
-		try {			
-			for (Integer inscriptionId : selectedInscriptions) {
-				copy.addDocument(generateSingleBadge(inscriptionId));
-			}
-		} finally {
-			copy.close();
-		}		
+		copy.close();
 						
 		return finalOutput.toByteArray();
 	}
 
-	protected static PdfReader generateSingleBadge(Integer inscriptionId)
+	protected static PdfReader generateSingleBadge(Inscription inscription)
 			throws IOException {
-		byte[] output = PDF.toBytes(template.render(inscriptionId));
+		byte[] output = PDF.toBytes(template.render(inscription));
 		return new PdfReader(output);
 	}
 

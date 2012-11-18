@@ -1,5 +1,6 @@
 package helpers;
 
+import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +8,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -26,6 +28,8 @@ import play.api.templates.Html;
 import play.mvc.Result;
 import play.mvc.Results;
 
+import com.lowagie.text.pdf.BarcodeDatamatrix;
+import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
 import com.lowagie.text.pdf.BaseFont;
 
@@ -39,14 +43,44 @@ public class PDF {
 
 		@Override
 		public ImageResource getImageResource(String uri) {
-			InputStream stream = getResourceStream(uri);			
+			Image image = null;
 			
-			if (stream == null)
+			if (uri.contains("datamatrix:")) {
+				image = getDatamatrixImage(uri, image);
+			} else {
+				image = getImagefromUri(uri);
+			}
+			
+			if (image == null)
 				return super.getImageResource(uri);
+			
+			scaleToOutputResolution(image);
+			return new ImageResource(new ITextFSImage(image));
+		}
+
+		protected Image getDatamatrixImage(String uri, Image image) {
+			String datamatrixValue = uri.replaceAll("datamatrix:", "");
+			BarcodeDatamatrix datamatrixGenerator = new BarcodeDatamatrix();
+			datamatrixGenerator.setWidth(16);
+			datamatrixGenerator.setHeight(16);
+			datamatrixGenerator.setOptions(BarcodeDatamatrix.DM_AUTO);
 			try {
-				Image image = Image.getInstance(getData(stream));
-				scaleToOutputResolution(image);
-				return new ImageResource(new ITextFSImage(image));
+				datamatrixGenerator.generate(datamatrixValue);
+				image = datamatrixGenerator.createImage();
+			} catch (Exception e) {
+				Logger.error("fetching image from datamatrix " + uri, e);
+				throw new RuntimeException(e);
+			}
+			return image;
+		}
+
+		protected Image getImagefromUri(String uri) {
+			InputStream stream = getResourceStream(uri);
+			if (stream == null)
+				return null;
+			
+			try {
+				return Image.getInstance(getData(stream));
 			} catch (Exception e) {
 				Logger.error("fetching image " + uri, e);
 				throw new RuntimeException(e);
@@ -66,9 +100,14 @@ public class PDF {
 					Logger.error("fetching image " + uri, e);
 					throw new RuntimeException(e);
 				}
-			}				
-			else
-				stream = Play.current().resourceAsStream(uri).get();
+			} else {
+				try {
+					stream = Play.current().resourceAsStream(uri).get();
+				} catch (Exception e) {
+					Logger.error("fetching image " + uri, e);
+					throw new RuntimeException(e);
+				}
+			}
 			return stream;
 		}
 
@@ -160,7 +199,7 @@ public class PDF {
 	public static void toStream(String string, OutputStream os) {
 		try {
 			Reader reader = new StringReader(string);
-			ITextRenderer renderer = new ITextRenderer();
+			ITextRenderer renderer = new ITextRenderer(33f, 20);
 			renderer.getFontResolver().addFontDirectory(Play.current().path() + "/conf/fonts", BaseFont.EMBEDDED);
 			MyUserAgent myUserAgent = new MyUserAgent(renderer.getOutputDevice());
 			myUserAgent.setSharedContext(renderer.getSharedContext());

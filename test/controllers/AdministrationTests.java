@@ -1,6 +1,6 @@
 package controllers;
 
-import static helpers.Helpers.fakeApplicationOverloaded;
+import static helpers.PlayTestHelpers.fakeApplicationOverloaded;
 import static org.fest.assertions.Assertions.assertThat;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.GET;
@@ -77,7 +77,9 @@ public class AdministrationTests {
 	}
 
 	private Inscription givenIHaveSelectedAnInscription() {
-		return FakeDataProvider.getAnExistingInscription();
+		Inscription inscription = FakeDataProvider.getAnExistingInscription();
+		inscription.setId(12);
+		return inscription;
 	}
 
 	private Result whenIGenerateABadge(int idInscription) {
@@ -144,6 +146,20 @@ public class AdministrationTests {
 	private void thenTheInscriptionsAreAdded(Result result) {
 		assertThat(status(result)).isEqualTo(OK);
 		assertThat(contentAsString(result)).contains("2 inscriptions");
+	}
+	
+//	@Test
+//	public void shouldFilterInscriptionsOnOrganizers() {
+//		givenThereAreInscriptionsWithSomeOrganizers();
+//		
+//		whenIFilterTheListOnOrganizersOnly();
+//		
+//		thenOnlyTheOrganizersAreDisplayed();
+//	}
+
+	private void givenThereAreInscriptionsWithSomeOrganizers() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

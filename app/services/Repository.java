@@ -47,6 +47,12 @@ public class Repository {
 		return query.getResultList().size() != 0;
 	}
 
+	public Inscription getInscriptionById(int inscriptionId) {
+		Query query = entityManagerFactory.getEntityManager().createQuery("SELECT i FROM inscriptions i where i.id = :id");
+		query.setParameter("id", inscriptionId);
+		return (Inscription) query.getSingleResult();
+	}
+
 }
 
 

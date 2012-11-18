@@ -40,6 +40,8 @@ public class DependenciesTest extends Dependencies {
 		
 		when(repository.updateInscriptions()).thenReturn(2);
 		
+		when(repository.getInscriptionById(12)).thenReturn(FakeDataProvider.getAnExistingInscription());
+		
 		return repository;
 	}
 

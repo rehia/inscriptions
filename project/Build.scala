@@ -16,6 +16,7 @@ object ApplicationBuild extends Build {
        "com.itextpdf" % "itextpdf" % "5.1.3",
        "net.sf.jtidy" % "jtidy" % "r938",
        "org.xhtmlrenderer" % "core-renderer" % "R8",
+       //"org.xhtmlrenderer" % "flying-saucer-parent" % "9.0.1",
        "com.fasterxml.jackson.core" % "jackson-annotations" % "2.0.6"
     )
 

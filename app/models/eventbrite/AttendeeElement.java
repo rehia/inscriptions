@@ -23,4 +23,7 @@ public class AttendeeElement {
 	
 	@JsonProperty("barcode")
 	public String barCode;
+	
+	@JsonProperty("ticket_id")
+	public String ticketId;
 }
