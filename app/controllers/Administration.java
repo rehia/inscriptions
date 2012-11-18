@@ -4,6 +4,7 @@ import helpers.PDF;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import models.Inscription;
+import models.ModelFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Security;
@@ -32,8 +34,16 @@ public class Administration extends Controller {
 	@Transactional
 	public static Result admin() {
 		List<Inscription> inscriptions = repository.getInscriptions();
-		return ok(admin.render(inscriptions, "", session().get("connectedUser")));
+		String message = "";
+		session().put("currentCategory", "tous");
+		return renderAdminView(inscriptions, message);
   	}
+
+	protected static Status renderAdminView(List<Inscription> inscriptions,
+			String message) {
+		List<String> categories = repository.getCategories();
+		return ok(admin.render(inscriptions, message, categories, session().get("currentCategory"), session().get("connectedUser")));
+	}
 	
 	@Transactional
 	public static Result generateBadge() throws DocumentException, IOException {
@@ -84,6 +94,15 @@ public class Administration extends Controller {
 	public static Result updateInscriptions() {
 		int inscriptionsAddedCount = repository.updateInscriptions();
 		List<Inscription> inscriptions = repository.getInscriptions();
-		return ok(admin.render(inscriptions, inscriptionsAddedCount + " inscriptions ajoutées", session().get("connectedUser")));
+		String message = inscriptionsAddedCount + " inscriptions ajoutées";
+		return renderAdminView(inscriptions, message);
+	}
+	
+	@Transactional
+	public static Result filterInscriptions(String category) {
+		List<Inscription> inscriptions = repository.getInscriptionsByCategory(category);
+		session().put("currentCategory", category);
+		
+		return renderAdminView(inscriptions, "");
 	}
 }

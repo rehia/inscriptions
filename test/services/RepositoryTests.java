@@ -81,7 +81,7 @@ public class RepositoryTests {
 	}
 
 	private void thenTheListContainAllInscriptions(List<Inscription> inscriptions) {
-		assertEquals(2, inscriptions.size());
+		assertEquals(3, inscriptions.size());
 	}
 	
 	@Test
@@ -230,5 +230,34 @@ public class RepositoryTests {
 	private void thenTheInscriptionIsValid(Inscription inscription) {
 		assertNotNull(inscription);
 		assertEquals("Durand", inscription.getNom());
+	}
+	
+	@Test
+	public void shouldGetOnlyOrganizersWhenFiltered() {
+		givenThereAreOrganizers();
+		
+		List<Inscription> inscriptions = whenIGetAListOfOrganizers();
+		
+		thenTheListContainOnlyOrganizers(inscriptions);		
+	}
+
+	private void givenThereAreOrganizers() {
+		mockQueryOnInscriptions(FakeDataProvider.getOrganizers());
+	}
+
+	private List<Inscription> whenIGetAListOfOrganizers() {
+		return repository.getInscriptionsByCategory(Inscription.ORGANISATEUR);
+	}
+
+	private void thenTheListContainOnlyOrganizers(List<Inscription> inscriptions) {
+		assertEquals(1, inscriptions.size());
+		assertEquals("Goldman", inscriptions.get(0).getNom());
+	}
+	
+	@Test
+	public void shouldReturnAListOfCategories() {
+		List<String> categories = repository.getCategories();
+		
+		assertEquals(3, categories.size());
 	}
 }

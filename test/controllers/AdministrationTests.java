@@ -148,18 +148,42 @@ public class AdministrationTests {
 		assertThat(contentAsString(result)).contains("2 inscriptions");
 	}
 	
-//	@Test
-//	public void shouldFilterInscriptionsOnOrganizers() {
-//		givenThereAreInscriptionsWithSomeOrganizers();
-//		
-//		whenIFilterTheListOnOrganizersOnly();
-//		
-//		thenOnlyTheOrganizersAreDisplayed();
-//	}
-
-	private void givenThereAreInscriptionsWithSomeOrganizers() {
-		// TODO Auto-generated method stub
+	@Test
+	public void shouldFilterInscriptionsOnOrganizers() {
+		givenThereAreInscriptionsWithSomeOrganizers();
 		
+		Result result = whenIFilterTheListOnOrganizersOnly();
+		
+		thenOnlyTheOrganizersAreDisplayed(result);
+	}
+
+	private void givenThereAreInscriptionsWithSomeOrganizers() {		
+	}
+
+	private Result whenIFilterTheListOnOrganizersOnly() {
+		Result result = null;
+
+		// c'est moche, mais seule façon trouvée pour passer des données et
+		// éviter d'encapsuler tous les appels
+		final List<Object> arguments = new ArrayList();
+		arguments.add(result);
+
+		running(fakeApplicationOverloaded(), new Runnable() {
+			@Override
+			public void run() {
+				FakeRequest fakeRequest = fakeRequest(GET,
+						"/admin/inscriptions/organisateur").withSession("connectedUser", "Admin");
+				arguments.set(0, routeAndCall(fakeRequest));
+			}
+		});
+
+		return (Result) arguments.get(0);
+	}
+
+	private void thenOnlyTheOrganizersAreDisplayed(Result result) {
+		assertThat(status(result)).isEqualTo(OK);
+		assertThat(contentAsString(result)).contains("Goldman");
+		assertThat(contentAsString(result)).doesNotContain("Dupont");
 	}
 
 }

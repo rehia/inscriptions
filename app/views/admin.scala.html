@@ -1,4 +1,4 @@
-@(inscriptions: List[Inscription], message: String, username: String)
+@(inscriptions: List[Inscription], message: String, categories: List[String], currentCategory: String, username: String)
 
 @import helper._
 @import helper.twitterBootstrap._
@@ -10,9 +10,16 @@
 			  <div class="btn-group">
 			    <button class="btn" id="generateBadge">Générer badge</button>
 			    <button class="btn" id="updateInscriptions">Mettre à jour les inscriptions</button>
+			    <select id="categoryFilter" class="btn">
+			    	<option value="tous">Tous</option>
+			    @for(category <- categories) {
+			    	<option value="@category" @if(category == currentCategory) {selected="selected"} >@category</option>
+			    }
+			    </select>
 			  </div>
 			  
 			</div>
+			  <div><strong>@inscriptions.size() personnes</strong></div>
 			<form id="formSelection">
 			<table class="table table-striped">
 				<caption>Liste des inscrits</caption>
@@ -67,6 +74,15 @@
 							}
 						});
 					}
+					
+					$("#categoryFilter").change(function(){
+						var category = $(this).val();
+						var action = "/admin";
+						if (category != "tous")
+							action = action + "/inscriptions/" + category;
+						
+						$(location).attr('href', action);			
+					});
 				});
 				
 				

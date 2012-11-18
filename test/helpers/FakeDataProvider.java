@@ -28,7 +28,15 @@ public class FakeDataProvider {
 		List<Inscription> inscriptions = new ArrayList<Inscription>();
 		inscriptions.add(getAnExistingInscription());
 		inscriptions.add(ModelFactory.createInscription("Dupont", "Bernard", "u_I@uj.fr", "119309147152822654321", Inscription.INSCRIT));
+		inscriptions.addAll(getOrganizers());
 
+		return inscriptions;
+	}
+
+	public static List<Inscription> getOrganizers() {
+		List<Inscription> inscriptions = new ArrayList<Inscription>();
+		inscriptions.add(ModelFactory.createInscription("Goldman", "Jean Jacques", "zokd@iy.fr", "119309147152822987654", Inscription.ORGANISATEUR));
+		
 		return inscriptions;
 	}
 

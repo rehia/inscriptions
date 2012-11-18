@@ -13,6 +13,7 @@ GET		/logout						controllers.Application.logout()
 GET     /admin                      controllers.Administration.admin()
 POST	/admin/badge				controllers.Administration.generateBadge()
 POST	/admin/inscriptions			controllers.Administration.updateInscriptions()
+GET		/admin/inscriptions/:category	controllers.Administration.filterInscriptions(category) 
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -1,5 +1,6 @@
 package services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -24,7 +25,7 @@ public class Repository {
 
 	public List<Inscription> getInscriptions() {
 		EntityManager entityManager = entityManagerFactory.getEntityManager();
-		return entityManager.createQuery("SELECT i FROM inscriptions i").getResultList();
+		return entityManager.createQuery("SELECT i FROM inscriptions i order by i.nom").getResultList();
 	}
 
 	public int updateInscriptions() {
@@ -51,6 +52,20 @@ public class Repository {
 		Query query = entityManagerFactory.getEntityManager().createQuery("SELECT i FROM inscriptions i where i.id = :id");
 		query.setParameter("id", inscriptionId);
 		return (Inscription) query.getSingleResult();
+	}
+
+	public List<Inscription> getInscriptionsByCategory(String category) {
+		Query query = entityManagerFactory.getEntityManager().createQuery("SELECT i FROM inscriptions i where i.categorie = :categorie order by i.nom");
+		query.setParameter("categorie", category);
+		return query.getResultList();
+	}
+
+	public List<String> getCategories() {
+		ArrayList<String> categories = new ArrayList<String>();
+		categories.add(Inscription.INSCRIT);
+		categories.add(Inscription.ORGANISATEUR);
+		categories.add(Inscription.SPEAKER);
+		return categories;
 	}
 
 }
