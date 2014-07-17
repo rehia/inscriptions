@@ -3,9 +3,11 @@ package controllers;
 import static helpers.PlayTestHelpers.fakeApplicationOverloaded;
 import static org.fest.assertions.Assertions.assertThat;
 import static play.mvc.Http.Status.OK;
+import static play.mvc.Http.Status.SEE_OTHER;
 import static play.test.Helpers.GET;
 import static play.test.Helpers.POST;
 import static play.test.Helpers.PUT;
+import static play.test.Helpers.DELETE;
 import static play.test.Helpers.contentAsBytes;
 import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.fakeRequest;
@@ -83,6 +85,11 @@ public class AdministrationTests {
 	}
 
 	private Result whenIGenerateABadge(int idInscription) {
+		return postCheckedInscriptionTo(idInscription, "/admin/badge", POST);
+	}
+
+	protected Result postCheckedInscriptionTo(int idInscription,
+			final String url, final String verb) {
 		Result result = null;
 
 		// c'est moche, mais seule façon trouvée pour passer des données et
@@ -96,7 +103,7 @@ public class AdministrationTests {
 			public void run() {
 				Map<String, String> map = new HashMap<String, String>();
 				map.put((String) arguments.get(1), "on");
-				FakeRequest fakeRequest = fakeRequest(POST, "/admin/badge").withSession("connectedUser", "Admin")
+				FakeRequest fakeRequest = fakeRequest(verb, url).withSession("connectedUser", "Admin")
 						.withFormUrlEncodedBody(map);
 				arguments.set(0, routeAndCall(fakeRequest));
 			}
@@ -184,6 +191,63 @@ public class AdministrationTests {
 		assertThat(status(result)).isEqualTo(OK);
 		assertThat(contentAsString(result)).contains("Goldman");
 		assertThat(contentAsString(result)).doesNotContain("Dupont");
+	}
+	
+	@Test
+	public void shouldSendABadgeToAnAttendee() {
+		int attendeeId = givenISelectAnAttendee();
+		
+		Result result = whenISendABadgeToTheAttendee(attendeeId);
+		
+		thenTheBadgeIsSent(result);
+	}
+
+	private int givenISelectAnAttendee() {
+		return givenIHaveSelectedAnInscription().getId();
+	}
+
+	private Result whenISendABadgeToTheAttendee(int attendeeId) {
+		return postCheckedInscriptionTo(attendeeId, "/admin/send", POST);
+	}
+
+	private void thenTheBadgeIsSent(Result result) {
+		assertThat(status(result)).isEqualTo(OK);
+		assertThat(contentAsString(result)).contains("badge envoyé");
+	}
+	
+	@Test
+	public void shouldNotSendABadgeToAnAttendeeIfAlreadySent() {
+		int attendeeId = givenISelectAnAttendeeWhomBadgeHasAlreadyBeenSent();
+		
+		Result result = whenISendABadgeToTheAttendee(attendeeId);
+		
+		thenTheBadgeIsNotSent(result);
+	}
+
+	private int givenISelectAnAttendeeWhomBadgeHasAlreadyBeenSent() {
+		return 13;
+	}
+
+	private void thenTheBadgeIsNotSent(Result result) {
+		assertThat(status(result)).isEqualTo(OK);
+		assertThat(contentAsString(result)).contains("badge déjà envoyé");
+	}
+	
+	@Test
+	public void shouldDeleteInscription() {
+		Inscription inscription = givenIHaveSelectedAnInscription();
+		
+		Result result = whenIDeleteTheInscription(inscription);
+		
+		thenTheInscriptionIsDeleted(result);
+	}
+
+	private Result whenIDeleteTheInscription(Inscription inscription) {
+		return postCheckedInscriptionTo(inscription.getId(), "/admin/inscriptions/delete", POST);
+	}
+
+	private void thenTheInscriptionIsDeleted(Result result) {
+		assertThat(status(result)).isEqualTo(SEE_OTHER);
 	}
 
 }

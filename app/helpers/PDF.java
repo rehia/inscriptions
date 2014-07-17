@@ -199,13 +199,16 @@ public class PDF {
 	public static void toStream(String string, OutputStream os) {
 		try {
 			Reader reader = new StringReader(string);
-			ITextRenderer renderer = new ITextRenderer(33f, 20);
+			ITextRenderer renderer = /*new ITextRenderer(32f, 19);*/new ITextRenderer(33f, 20);
 			renderer.getFontResolver().addFontDirectory(Play.current().path() + "/conf/fonts", BaseFont.EMBEDDED);
 			MyUserAgent myUserAgent = new MyUserAgent(renderer.getOutputDevice());
 			myUserAgent.setSharedContext(renderer.getSharedContext());
 			renderer.getSharedContext().setUserAgentCallback(myUserAgent);
 			Document document = XMLResource.load(reader).getDocument();
 			renderer.setDocument(document, "http://localhost:9000");
+			//renderer.getSharedContext().setDebug_draw_boxes(true);
+			//renderer.getSharedContext().setDebug_draw_line_boxes(true);
+			//renderer.getSharedContext().setDebug_draw_inline_boxes(true);
 			renderer.layout();
 			renderer.createPDF(os);
 		} catch (Exception e) {

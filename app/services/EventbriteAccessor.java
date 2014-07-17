@@ -1,9 +1,6 @@
 package services;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -21,8 +18,12 @@ import play.Logger;
 public class EventbriteAccessor implements ExternalSourceAccessor {
 	
 	private URL urlService;
+	private HttpRequestSender requestSender;
+	private ModelFactory modelFactory;
 	
-	public EventbriteAccessor(String urlService, String applicationKey, String userKey, String eventId) throws MalformedURLException {
+	public EventbriteAccessor(HttpRequestSender requestSender, String urlService, String applicationKey, String userKey, String eventId, ModelFactory modelFactory) throws MalformedURLException {
+		
+		this.requestSender = requestSender;
 		
 		String parameters = addParameter("", "app_key", applicationKey);
 		parameters = addParameter(parameters, "user_key", userKey);
@@ -32,6 +33,7 @@ public class EventbriteAccessor implements ExternalSourceAccessor {
 			urlService += "?" + parameters;
 		
 		this.urlService = new URL(urlService);
+		this.modelFactory = modelFactory;
 	}
 
 	protected String addParameter(String parameters, String key, String value) {
@@ -66,7 +68,15 @@ public class EventbriteAccessor implements ExternalSourceAccessor {
 		List<Inscription> inscriptions = new ArrayList<Inscription>();
 		for (Attendee attendee : message.attendees) {
 			AttendeeElement element = attendee.inscription;
-			inscriptions.add(ModelFactory.createInscription(element.lastName, element.firstName, element.email, element.barCode, element.jobTitle, element.company, element.ticketId));
+			inscriptions.add(
+					this.modelFactory.createInscription(
+							element.lastName,
+							element.firstName,
+							element.email,
+							element.barCode,
+							element.jobTitle,
+							element.company,
+							element.ticketId));
 		}
 		return inscriptions;
 	}
@@ -84,22 +94,7 @@ public class EventbriteAccessor implements ExternalSourceAccessor {
 	}
 
 	public String getAttendees() throws IOException {
-		StringBuilder content = new StringBuilder();
-		BufferedReader reader = null;
-		try {
-			InputStream stream = this.urlService.openStream();
-			reader = new BufferedReader(new InputStreamReader(stream));
-
-	        String inputLine;
-	        while ((inputLine = reader.readLine()) != null)
-	            content.append(inputLine);
-	        
-		} finally {
-			if (reader != null)
-				reader.close();
-		}
-		
-		return content.toString();
+		return requestSender.sendGetRequest(this.urlService);
 	}
 
 }

@@ -2,6 +2,7 @@ package services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -24,6 +25,7 @@ import javax.persistence.Query;
 
 import models.Inscription;
 
+import org.codehaus.jackson.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -33,14 +35,16 @@ public class RepositoryTests {
 	private Repository repository;
 	private EntityManager entityManager;
 	private ExternalSourceAccessor externalSourceAccessor;
+	private MailSender mailSender;
 	
 	@Before
 	public void setUp() throws Exception {
 		EntityManagerFactory entityManagerFactory = new StubEntityManagerFactory();
 		entityManager = entityManagerFactory.getEntityManager();
 		externalSourceAccessor = mock(ExternalSourceAccessor.class);
+		mailSender = mock(MailSender.class);
 
-		repository = spy(new Repository(entityManagerFactory, externalSourceAccessor));
+		repository = spy(new Repository(entityManagerFactory, externalSourceAccessor, mailSender));
 	}
 
 	@Test
@@ -258,6 +262,58 @@ public class RepositoryTests {
 	public void shouldReturnAListOfCategories() {
 		List<String> categories = repository.getCategories();
 		
-		assertEquals(3, categories.size());
+		assertEquals(5, categories.size());
+	}
+	
+	@Test
+	public void shouldSendBadgeToAttendee() {
+		Inscription inscription = givenISelectAnAttendee();
+		String badge = andIGeneratedHisBadge();
+		
+		whenISendTheBadgeToTheAttendee(inscription, badge);
+		
+		thenTheBadgeIsSent();
+		andTheInscriptionIsTaggedAsSent(inscription);
+	}
+
+	private Inscription givenISelectAnAttendee() {
+		Inscription anExistingInscription = FakeDataProvider.getAnExistingInscription();
+		anExistingInscription.setId(12);
+		return anExistingInscription;
+	}
+
+	private String andIGeneratedHisBadge() {
+		return FakeDataProvider.getBase64PDF();
+	}
+
+	private void whenISendTheBadgeToTheAttendee(Inscription inscription, String badge) {
+		repository.sendBadgeToAttendee(inscription, badge);
+	}
+
+	private void thenTheBadgeIsSent() {
+		verify(mailSender).send(any(Inscription.class), anyString());
+	}
+
+	private void andTheInscriptionIsTaggedAsSent(Inscription inscription) {
+		assertTrue(inscription.badgeIsSent());
+	}
+	
+	@Test
+	public void shouldDeleteInscriptions() {
+		Inscription inscription = givenIHaveAnInscription();
+		
+		whenIDeleteTheInscription(inscription);
+		
+		theTheInscriptionIsDeleted();
+	}
+
+	private void whenIDeleteTheInscription(Inscription inscription) {
+		List<Inscription> inscriptions = new ArrayList<Inscription>();
+		inscriptions.add(inscription);
+		repository.deleteInscriptions(inscriptions);
+	}
+
+	private void theTheInscriptionIsDeleted() {
+		verify(entityManager).remove(any(Inscription.class));
 	}
 }

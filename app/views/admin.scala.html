@@ -8,8 +8,10 @@
 			<h2>Administration</h2>
 			<div class="btn-toolbar">
 			  <div class="btn-group">
-			    <button class="btn" id="generateBadge">Générer badge</button>
 			    <button class="btn" id="updateInscriptions">Mettre à jour les inscriptions</button>
+			    <button class="btn" id="generateBadge">Générer badge</button>
+			    <button class="btn" id="sendBadge">Envoyer les badges</button>
+			    <button class="btn" id="deleteInscriptions">Supprimer les inscriptions</button>
 			    <select id="categoryFilter" class="btn">
 			    	<option value="tous">Tous</option>
 			    @for(category <- categories) {
@@ -34,6 +36,7 @@
 						<th>Prénom</th>
 						<th>Email</th>
 						<th>Entreprise</th>
+						<th>Badge envoyé</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -44,6 +47,7 @@
 					  	<td>@inscription.getPrenom()</td>
 					  	<td>@inscription.getEmail()</td>
 					  	<td>@inscription.getEntreprise()</td>
+					  	<td>@inscription.badgeIsSent()</td>
 					  </tr>
 					} 
 				</tbody>
@@ -96,6 +100,45 @@
 					$("#deselectAll").click(function(){
 						$(".checkSelection").attr('checked', false);	
 						return false;
+					});
+					
+					$("#sendBadge").click(function() {
+						var sendCount = 0;
+						var message = "Nombre d'envoi effectués : ";						
+						
+						var checkboxes = $(".checkSelection:checked").toArray();
+						
+						for (var i = 0; i < checkboxes.length; i++) {
+							var name = $(checkboxes[i]).attr('name');
+							
+							//$.post('/admin/send', name + "=on", function() {
+								//sendCount++;								
+							//});
+							$.ajax({
+								url: '/admin/send',
+								type: 'POST',
+								data: name + "=on",
+								async: false,
+								success: function(data) {
+									sendCount++;								
+								}
+							});
+						}
+						
+						$("#dialog p").html(message + sendCount + "/" + checkboxes.length);
+						$("#dialog").dialog({
+							buttons: {
+								Ok: function() {
+									$(this).dialog( "close" );
+								}
+							}
+						});
+					});
+					
+					$("#deleteInscriptions").click(function() {						
+						$("#formSelection").attr("action", "/admin/inscriptions/delete");
+						$("#formSelection").attr("method", "POST");
+						$("#formSelection").submit();						
 					});
 				});
 				

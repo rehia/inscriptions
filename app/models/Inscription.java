@@ -51,11 +51,18 @@ public class Inscription {
 	@Column(name = "categorie", length = 30)
 	public String categorie;
 
+	@Column(name = "badgeenvoye")
+	public boolean badgeIsSent;
+
 	public static final String INSCRIT = "inscrit";
 
 	public static final String ORGANISATEUR = "organisateur";
 
 	public static final String SPEAKER = "orateur";
+
+	public static final String STUDENT = "etudiant";
+
+	public static final String VIP = "vip";
 	
 	public int getId() {
 		return id;
@@ -118,12 +125,24 @@ public class Inscription {
 		return this.categorie != null && this.categorie.equals(categorie);
 	}
 	public boolean isAttendee() {
-		return verifyCategory(INSCRIT);
+		return verifyCategory(INSCRIT) || verifyCategory(VIP) || verifyCategory(STUDENT);
 	}
 	public void setCategorie(String categorie) {
 		this.categorie = categorie;		
 	}
 	public boolean isSpeaker() {
 		return verifyCategory(SPEAKER);
+	}
+	public Boolean badgeIsSent() {
+		return this.badgeIsSent;
+	}
+	public void setBadgeAsSent() {
+		this.badgeIsSent = true;		
+	}
+	public boolean isStudent() {
+		return verifyCategory(STUDENT);
+	}
+	public boolean isVIP() {
+		return verifyCategory(VIP);
 	}
 }

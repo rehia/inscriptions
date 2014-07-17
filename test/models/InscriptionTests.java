@@ -5,6 +5,11 @@ import static org.junit.Assert.*;
 
 public class InscriptionTests {
 	
+	private ModelFactory createModelFactory() {
+		return new ModelFactory("15723826", "16008859", "16057183", "16057319", "15929463", "17826293");
+	}
+
+
 	@Test
 	public void shouldNotBeAnOrganizerIfNoCategory() {
 		Inscription inscription = new Inscription();
@@ -14,7 +19,7 @@ public class InscriptionTests {
 	
 	@Test
 	public void shouldCreateAnInscriptionWithNullCategorie() {
-		Inscription inscription = ModelFactory.createInscription("nom", "prenom", "email", "barCode", null);
+		Inscription inscription = createModelFactory().createInscription("nom", "prenom", "email", "barCode", null);
 		
 		assertFalse(inscription.isOrganizer());
 		assertFalse(inscription.isAttendee());
@@ -23,7 +28,7 @@ public class InscriptionTests {
 	
 	@Test
 	public void shouldCreateAnInscriptionWithEmptyCategorie() {
-		Inscription inscription = ModelFactory.createInscription("nom", "prenom", "email", "barCode", "");
+		Inscription inscription = createModelFactory().createInscription("nom", "prenom", "email", "barCode", "");
 		
 		assertFalse(inscription.isOrganizer());
 		assertFalse(inscription.isAttendee());

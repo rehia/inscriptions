@@ -12,12 +12,11 @@ object ApplicationBuild extends Build {
        "org.hibernate" % "hibernate-entitymanager" % "4.1.7.Final",
        "postgresql" % "postgresql" % "9.1-901.jdbc4",
        "org.mockito" % "mockito-all" % "1.9.5",
-       // "pdf" % "pdf_2.9.1" % "0.3",
        "com.itextpdf" % "itextpdf" % "5.1.3",
        "net.sf.jtidy" % "jtidy" % "r938",
        "org.xhtmlrenderer" % "core-renderer" % "R8",
-       //"org.xhtmlrenderer" % "flying-saucer-parent" % "9.0.1",
-       "com.fasterxml.jackson.core" % "jackson-annotations" % "2.0.6"
+       "com.fasterxml.jackson.core" % "jackson-annotations" % "2.0.6",
+       "commons-codec" % "commons-codec" % "1.4"
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(

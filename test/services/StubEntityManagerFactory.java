@@ -36,7 +36,7 @@ public class StubEntityManagerFactory implements EntityManagerFactory {
 		}).when(entityManager).persist(any(Inscription.class));		
 
 		Query queryAll = mock(Query.class);
-		when(entityManager.createQuery("SELECT i FROM inscriptions i")).thenReturn(queryAll);
+		when(entityManager.createQuery("SELECT i FROM inscriptions i order by i.nom")).thenReturn(queryAll);
 		when(queryAll.getResultList()).thenReturn(FakeDataProvider.getSomeExistingInscriptions());
 	}
 

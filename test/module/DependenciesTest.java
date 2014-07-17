@@ -42,8 +42,10 @@ public class DependenciesTest extends Dependencies {
 		
 		when(repository.getInscriptionById(12)).thenReturn(FakeDataProvider.getAnExistingInscription());
 		
-		when(repository.getInscriptionsByCategory(Inscription.ORGANISATEUR)).thenReturn(FakeDataProvider.getOrganizers());
+		when(repository.getInscriptionById(13)).thenReturn(FakeDataProvider.getAnExistingInscriptionWithBadgeSent());
 		
+		when(repository.getInscriptionsByCategory(Inscription.ORGANISATEUR)).thenReturn(FakeDataProvider.getOrganizers());
+				
 		return repository;
 	}
 

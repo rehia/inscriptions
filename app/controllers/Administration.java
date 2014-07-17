@@ -11,6 +11,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.codec.binary.Base64;
+
 import models.Inscription;
 import models.ModelFactory;
 import play.db.jpa.Transactional;
@@ -48,7 +50,7 @@ public class Administration extends Controller {
 	@Transactional
 	public static Result generateBadge() throws DocumentException, IOException {
 		
-		byte[] finalBadge = generateAndMergeBadges(getSelectedInscriptionId(request()));
+		byte[] finalBadge = generateAndMergeBadges(getSelectedInscriptionIds(request()));
 		return ok(finalBadge).as("application/pdf");		
 	}
 
@@ -58,8 +60,8 @@ public class Administration extends Controller {
 		PdfCopyFields copy = new PdfCopyFields(finalOutput);
 					
 		for (Integer inscriptionId : selectedInscriptions) {
-			Inscription inscription = repository.getInscriptionById(inscriptionId);
-			copy.addDocument(generateSingleBadge(inscription));
+			byte[] badge = getSingleBadgeFromInscriptionId(inscriptionId);
+			copy.addDocument(new PdfReader(badge));
 		}
 		
 		copy.close();
@@ -67,13 +69,17 @@ public class Administration extends Controller {
 		return finalOutput.toByteArray();
 	}
 
-	protected static PdfReader generateSingleBadge(Inscription inscription)
-			throws IOException {
-		byte[] output = PDF.toBytes(template.render(inscription));
-		return new PdfReader(output);
+	protected static byte[] getSingleBadgeFromInscriptionId(Integer inscriptionId) {
+		Inscription inscription = repository.getInscriptionById(inscriptionId);
+		return getSingleBadgeFromInscription(inscription);
 	}
 
-	protected static Set<Integer> getSelectedInscriptionId(Request request) {
+	protected static byte[] getSingleBadgeFromInscription(
+			Inscription inscription) {
+		return PDF.toBytes(template.render(inscription));
+	}
+
+	protected static Set<Integer> getSelectedInscriptionIds(Request request) {
 		Set<Integer> selectedInscriptionIds = new HashSet<Integer>();
 		
 		for (String checkboxId : getCheckedCheckboxesId(request)) {
@@ -104,5 +110,54 @@ public class Administration extends Controller {
 		session().put("currentCategory", category);
 		
 		return renderAdminView(inscriptions, "");
+	}
+	
+	@Transactional
+	public static Result sendBadge() throws IOException {
+		Inscription inscription = getSelectedInscription();
+		
+		if (inscription.badgeIsSent())
+			return ok("badge déjà envoyé pour " + inscription.getEmail());
+
+		byte[] badge = getSingleBadgeFromInscription(inscription);
+		
+		try {
+			String message = repository.sendBadgeToAttendee(inscription, formatBadge(badge));
+			return ok("badge envoyé pour " + inscription.getEmail());
+		} catch (RuntimeException e) {
+			play.Logger.error("erreur lors de l'envoi du badge à " + inscription.getEmail(), e);
+			return badRequest("erreur : " + e.getMessage());
+		}
+		
+	}
+
+	private static String formatBadge(byte[] badge) {
+		return Base64.encodeBase64String(badge);
+	}
+
+	protected static Inscription getSelectedInscription() {
+		int inscriptionId = getSelectedInscriptionIds(request()).iterator().next();
+		Inscription inscription = repository.getInscriptionById(inscriptionId);
+		return inscription;
+	}
+	
+	@Transactional
+	public static Result deleteInscriptions() {
+		List<Inscription> inscriptions = getSelectedInscriptions();
+		
+		repository.deleteInscriptions(inscriptions);
+		
+		return redirect(routes.Administration.admin());
+	}
+
+	private static List<Inscription> getSelectedInscriptions() {
+		List<Inscription> inscriptions = new ArrayList<Inscription>();
+		Set<Integer> inscriptionIds = getSelectedInscriptionIds(request());
+		
+		for(int inscriptionId : inscriptionIds) {
+			inscriptions.add(repository.getInscriptionById(inscriptionId));
+		}
+		
+		return inscriptions;
 	}
 }

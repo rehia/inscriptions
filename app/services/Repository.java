@@ -6,16 +6,20 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import play.api.Logger;
+
 import models.Inscription;
 
 public class Repository {
 	
 	private EntityManagerFactory entityManagerFactory;
 	private ExternalSourceAccessor externalSourceAccessor;
+	private MailSender mailSender;
 
-	public Repository(EntityManagerFactory entityManagerFactory, ExternalSourceAccessor externalSourceAccessor) {
+	public Repository(EntityManagerFactory entityManagerFactory, ExternalSourceAccessor externalSourceAccessor, MailSender mailSender) {
 		this.entityManagerFactory = entityManagerFactory;
 		this.externalSourceAccessor = externalSourceAccessor;
+		this.mailSender = mailSender;
 	}
 
 	public void save(Inscription inscription) {
@@ -25,7 +29,8 @@ public class Repository {
 
 	public List<Inscription> getInscriptions() {
 		EntityManager entityManager = entityManagerFactory.getEntityManager();
-		return entityManager.createQuery("SELECT i FROM inscriptions i order by i.nom").getResultList();
+		Query query = entityManager.createQuery("SELECT i FROM inscriptions i order by i.nom");
+		return query.getResultList();
 	}
 
 	public int updateInscriptions() {
@@ -65,8 +70,28 @@ public class Repository {
 		categories.add(Inscription.INSCRIT);
 		categories.add(Inscription.ORGANISATEUR);
 		categories.add(Inscription.SPEAKER);
+		categories.add(Inscription.STUDENT);
+		categories.add(Inscription.VIP);
 		return categories;
 	}
+
+	public String sendBadgeToAttendee(Inscription inscription, String badge) {
+		
+		String message = mailSender.send(inscription, badge);
+		inscription.setBadgeAsSent();
+		play.Logger.info("badge envoyé à : " + inscription.getEmail());
+		entityManagerFactory.getEntityManager().merge(inscription);
+		return message;
+	}
+
+	public void deleteInscriptions(List<Inscription> inscriptions) {
+		EntityManager entityManager = entityManagerFactory.getEntityManager();
+		for (Inscription inscription : inscriptions) {
+			entityManager.remove(inscription);
+		}
+	}
+
+	
 
 }
 

@@ -17,24 +17,10 @@
 			<div class="logo"><img height="100%" src="/public/images/at-mtp.png" alt=""></div>
 			
 			@if(inscription.isOrganizer()) {
-			<div class="cadre cadreOrga">&nbsp;</div>
-			<div class="bordGauche">
-				<img width="100%" height="100%" src="/public/images/bord_gauche_orga.png" alt=""/>
-			</div>
-			<div class="bordDroit">
-				<img width="100%" height="100%" src="/public/images/bord_droit_orga.png" alt=""/>
-			</div>
-			<div class="bulles bullesOrga">&nbsp;</div>
+			<div class="cadre"><img width="100%" height="100%" src="/public/images/cadre_orgas.png" alt=""/></div>
 			}
 			@if(inscription.isSpeaker()) {
-			<div class="cadre cadreOrateur">&nbsp;</div>
-			<div class="bordGauche">
-				<img width="100%" height="100%" src="/public/images/bord_gauche_orateur.png" alt=""/>
-			</div>
-			<div class="bordDroit">
-				<img width="100%" height="100%" src="/public/images/bord_droit_orateur.png" alt=""/>
-			</div>
-			<div class="bulles bullesOrateur">&nbsp;</div>
+			<div class="cadre"><img width="100%" height="100%" src="/public/images/cadre_orateurs.png" alt=""/></div>
 			}
 			@if(inscription.isAttendee()) {
 			<div class="bulles bullesAutre">&nbsp;</div>			
@@ -57,79 +43,78 @@
 			</div>
 			
 			@if(inscription.isAttendee()) {
-			<div id="codeNum">Retrouvez le programme sur<br/><span class="lien">http://bit.ly/atmtp12</span></div>
+			<div id="codeNum">Retrouvez le programme sur<br/><span class="lien">http://bit.ly/atmtp13</span></div>
 			<div id="code2D"><img width="100%" height="100%" src="/public/images/tag_appli.png" alt=""/></div>
 			}
 			
-			@if(inscription.isOrganizer() || inscription.isSpeaker()) {
-			<div class="double">
-				<div class="logo"><img height="100%" src="/public/images/at-mtp.png" alt=""></div>
+			<!-- haut droit -->
 			
-				@if(inscription.isOrganizer()) {
-				<div class="cadre cadreOrga">&nbsp;</div>
-				<div class="bordGauche">
-					<img width="100%" height="100%" src="/public/images/bord_gauche_orga.png" alt=""/>
-				</div>
-				<div class="bordDroit">
-					<img width="100%" height="100%" src="/public/images/bord_droit_orga.png" alt=""/>
-				</div>
-				<div class="bulles bullesOrga">&nbsp;</div>
-				}
-				
-				@if(inscription.isSpeaker()) {
-				<div class="cadre cadreOrateur">&nbsp;</div>
-				<div class="bordGauche">
-					<img width="100%" height="100%" src="/public/images/bord_gauche_orateur.png" alt=""/>
-				</div>
-				<div class="bordDroit">
-					<img width="100%" height="100%" src="/public/images/bord_droit_orateur.png" alt=""/>
-				</div>
-				<div class="bulles bullesOrateur">&nbsp;</div>
-				}
+			<div class="logod"><img height="100%" src="/public/images/at-mtp.png" alt=""></div>
 			
-				<div id="nom"><span class="prenom">@inscription.getPrenom()</span><br/>@inscription.getNom()</div>
-				<div id="societe">@inscription.getEntreprise()</div>
-				
-				<div id="profil">
-				@if(inscription.isOrganizer()) {
-					Organisateur
-				}
-				@if(inscription.isSpeaker()) {
-					Orateur
-				}</div>
-			</div>
+			@if(inscription.isOrganizer()) {
+			<div class="cadred"><img width="100%" height="100%" src="/public/images/cadre_orgas.png" alt=""/></div>
+			}
+			@if(inscription.isSpeaker()) {
+			<div class="cadred"><img width="100%" height="100%" src="/public/images/cadre_orateurs.png" alt=""/></div>
+			}
+			@if(inscription.isAttendee()) {
+			<div class="bullesd bullesAutre">&nbsp;</div>			
 			}
 			
+			<div id="nomd"><span class="prenomd">@inscription.getPrenom()</span><br/>@inscription.getNom()</div>
+			<div id="societed">
+			@if(inscription.isAttendee()) {
+			<span class="entreprise">@inscription.getEntreprise()</span>
+			}else{
+				@inscription.getEntreprise()
+			}</div>
+			<div id="profild">
+			@if(inscription.isOrganizer()) {
+				Organisateur
+			}
+			@if(inscription.isSpeaker()) {
+				Orateur
+			}
+			</div>
 			
 			@if(inscription.isAttendee()) {
-			<div id="code2Db"><img height="170" width="170" src="datamatrix:@inscription.getBarCode()" alt=""/></div>
+			<div id="codeNumd">Retrouvez le programme sur<br/><span class="lien">http://bit.ly/atmtp13</span></div>
+			<div id="code2Dd"><img width="100%" height="100%" src="/public/images/tag_appli.png" alt=""/></div>
+			}
+			
+			<!-- bas -->
+			@if(inscription.isAttendee()) {
 			
 			<div class="consigneT">Recommandations</div>
 			<div class="consigne">
 				<p>Ce document est votre <b>billet d'entrée</b> et votre <b>badge</b>.</p>
 				<ul>
 					<li><b>imprimez-le</b> et <b>amenez-le</b> le jour de l'événement,</li>
-					<li>à l'accueil, <b>présentez-vous avec</b>, et venez récupérer votre sac,</li>
-					<li><b>pliez-le</b> en quatre pour faire apparaître le quart supérieur gauche avec votre nom,</li>
-					<li><b>glissez-le</b> dans le porte badge qui vous sera remis avec le sac : votre badge est prêt !</li>
+					<li>à l'accueil, <b>présentez-vous avec</b>, et venez récupérer votre clé USB,</li>
+					<li><b>pliez-le</b> en quatre pour faire apparaître votre nom recto-verso,</li>
+					<li><b>glissez-le</b> dans le porte badge qui vous sera remis à l'accueil : votre badge est prêt !</li>
 				</ul>
-				<p>Rendez-vous le <b>jeudi 29 novembre</b> à partir de <b>8h30</b>.<br/>Nous vous souhaitons une très bonne journée !</p>
+				<p>Rendez-vous le <b>vendredi 18 octobre</b> à partir de <b>8h30</b>.<br/>Nous vous souhaitons une très bonne journée !</p>
 			</div>
-			<div class="sponsors"><img width="100%" height="100%" src="/public/images/sponsors-2.png" alt=""></div>
+			
+			<div id="code2Db"><img height="170" width="170" src="datamatrix:@inscription.getBarCode()" alt=""/></div>
+			
+			<div class="sponsors"><img width="100%" height="100%" src="/public/images/sponsors.png" alt=""></div>
 
-			<div class="plan"><img width="100%" height="100%" src="/public/images/plan.jpg" alt=""></div>
+			<!-- Bas droite -->
 			<div class="adresseT">Se rendre à l'événement</div>
-			<div class="adresse">Ecole Polytech, Place Eugène Bataillon - Montpellier</div>
+			<div class="adresse">Faculté d'Education, 2 Allée Pierre Blanchet - Montpellier</div>
 			<div class="acces">
-				<p>Si vous venez en voiture, entrez l'adresse ci-dessus dans votre GPS préféré.</p>
+				<p>Nous vous déconseillons de venir en voiture faute de parking.</p>
 				<p>Mais venez plutôt en tramway, <b>Ligne 1 - Bleue</b>. Vous avez une rame toutes les 6 minutes environ :</p>
 				<ul>
-					<li>à la gare SNCF Montpellier St-Roch, prenez la direction Mosson,</li>
-					<li>environ 20 minutes plus tard, descendez à l'arrêt "Université des Sciences et des Lettres",</li>
-					<li>longez la contre-allée Augustin Fliche qui passe devant l'hôpital jusqu'au rond-point au centre duquel trône une <b>sculpture géante rouge en forme de donut surmonté d'une saucisse</b>,</li>
-					<li>entrez sur le campus de l'Université Montpellier 2, le bâtiment 31 qui abrite Polytech sera fléché.</li>
+					<li>A la gare SNCF St-Roch, prenez la direction Mosson,</li>
+					<li>Descendez à l'arrêt "Stade Philippidès" (environ 15 min),</li>
+					<li>Longez la voie de tram jusqu'au rond-point,</li>
+					<li>Entrez sur le campus de la Faculté d'Education sur la gauche du rond-point, l'accueil sera fléché.</li>
 				</ul>
 			</div>	
+			<div class="plan"><img width="95%" height="95%" src="/public/images/plan2013.png" alt=""></div>
 			}		
 		</div>
 	</body>
